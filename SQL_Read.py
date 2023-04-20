@@ -26,7 +26,7 @@ class UserDatabase:
         return result
 
     def get_top_ten(self,Uname):
-        sql = f"SELECT name, screen_name from user ORDER BY followers_count DESC LIMIT 10'"
+        sql = f"SELECT name, screen_name from user ORDER BY followers_count DESC LIMIT 10"
         self.cursor.execute(sql)
         result = self.cursor.fetchall()
         return result
