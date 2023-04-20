@@ -32,10 +32,10 @@ def retrieve_input():
             for rows in y:
                 uname = rows[1]
                 link = tk.Label(frame, text=rows[1], font=('Helveticabold', 15), fg="blue", cursor="hand2")
-                link.grid(row=i + 3, column=0)
+                link.grid(row=i + 4, column=0)
                 link.bind("<Button-1>", lambda event: user_details(event, uname))
                 link = tk.Label(frame, text=rows[0], font=('Helveticabold', 15))
-                link.grid(row=i + 3, column=1)
+                link.grid(row=i + 4, column=1)
                 i = i + 1
         else:
             user_obj = UserDatabase()
@@ -45,10 +45,10 @@ def retrieve_input():
             for rows in y:
                 uname = rows[1]
                 link = tk.Label(frame, text=rows[1], font=('Helveticabold', 15), fg="blue", cursor="hand2")
-                link.grid(row=i + 3, column = 0)
+                link.grid(row=i + 4, column = 0)
                 link.bind("<Button-1>", lambda event: user_details(event, uname))
                 link = tk.Label(frame, text=rows[0], font=('Helveticabold', 15))
-                link.grid(row=i + 3, column=1)
+                link.grid(row=i + 4, column=1)
                 i = i+1
             cache_obj.add_in_cache(x[1:],y)
         buttonCommit = tk.Button(frame, height=1, width=10, text="Show more", command=lambda: show_more(x,offset+10))
@@ -62,7 +62,7 @@ def retrieve_input():
         for rows in tweets:
             tweet = rows['text']
             link = tk.Label(frame, text=tweet + "\n * * * * *", font=('Helveticabold', 15), fg="blue", cursor="hand2")
-            link.grid(row=i + 3, column=0)
+            link.grid(row=i + 4, column=0)
             # link.bind("<Button-1>", lambda event: user_details(event, uname))
             # link = tk.Label(frame, text=rows[0], font=('Helveticabold', 15))
             # link.grid(row=i + 3, column=1)
@@ -79,10 +79,10 @@ def retrieve_input():
         for rows in tweets:
             t_id = rows['id_str']
             link1 = tk.Label(frame, text=t_id, font=('Helveticabold', 15), fg="blue", cursor="hand2")
-            link1.grid(row=i + 3, column=0)
+            link1.grid(row=i + 4, column=0)
             tweet = rows['text']
             link2 = tk.Label(frame, text=tweet, font=('Helveticabold', 15))
-            link2.grid(row=i + 3, column=1)
+            link2.grid(row=i + 4, column=1)
             link1.bind("<Button-1>", lambda event: tweet_details(event, t_id))
             i = i + 1
         #cache_obj.add_in_cache(x[1:], y)
@@ -132,7 +132,20 @@ def show_more(x,offset):
     buttonCommit.grid()
     tk.mainloop()
 
-
+def top_10_users():
+    user_obj = UserDatabase()
+    y = user_obj.get_top_ten()
+    i = 0
+    clear_frame()
+    for rows in y:
+        uname = rows[1]
+        link = tk.Label(frame, text=rows[1], font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link.grid(row=i + 4, column=0)
+        link.bind("<Button-1>", lambda event: user_details(event, uname))
+        link = tk.Label(frame, text=rows[0], font=('Helveticabold', 15))
+        link.grid(row=i + 4, column=1)
+        i = i + 1
+    tk.mainloop()
 
 master = tk.Tk()
 master.title('Twitter search application')
@@ -143,6 +156,10 @@ e1.grid(row=1)
 cache_obj = Cache()
 buttonCommit = tk.Button(master, height=1, width=10, text="Search", command=lambda: retrieve_input())
 buttonCommit.grid(row=2)
+buttonCommit = tk.Button(master, height=1, width=10, text="Top 10 Users", command=lambda: top_10_users())
+buttonCommit.grid(row=3,column =0)
+buttonCommit = tk.Button(master, height=1, width=10, text="Top 10 Tweets", command=lambda: top_10_users())
+buttonCommit.grid(row=3,column =1)
 frame = tk.Frame(master, height=1, width=10)
-frame.grid(row=3)
+frame.grid(row=4)
 tk.mainloop()
