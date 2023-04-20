@@ -11,42 +11,36 @@ class TweetQuery:
     def query_tweets_by_regex(self, regex_pattern):
         # Query tweets that match the regex pattern in the text field, ordered by popularity, and limit the results by 10
         tweets = self.collection.find({"text": {"$regex": regex_pattern, "$options": "i"}},{'text':1,'id_str':1, '_id':0}).sort("popularity", pymongo.DESCENDING).limit(10)
-        return tweets
-
-    def print_tweets_regex(self, tweets):
-        for tweet in tweets:
-            print(tweet)
+        return self.get_details_list(tweets)
 
     def search_tweets_by_hashtags(self, hashtags):
         query = {"hashtags": {"$in": [hashtags]}}
         limit = 10
         tweets = self.collection.find(query,{'text':1,'_id':0}).sort("popularity", pymongo.DESCENDING).limit(limit)
-        return tweets
-
-    def print_tweets(self, tweets):
-        for tweet in tweets:
-            print(tweet)
+        return self.get_details_list(tweets)
 
     def get_tweet_details(self, tweet_id):
         tweet = self.collection.find_one({"id_str": tweet_id})
-        if tweet:
-            print(tweet)
-        else:
-            return None
+        return self.get_details_list(tweet)
 
     def get_comments_for_tweet(self, tweet_id):
         comments = self.collection.find({"in_reply_to_status_id_str": tweet_id}).sort("created_at", pymongo.ASCENDING)
-
-        return comments
+        return self.get_details_list(comments)
 
     def get_tweets_by_username(self, username):
-        tweets = collection.find({"user_name": username})
-        return [tweet for tweet in tweets]
+        tweets = self.collection.find({"user_name": username})
+        return self.get_details_list(tweets)
 
     def get_top_10_popular_tweets(self):
         top_tweets = self.collection.find().sort("popularity", pymongo.DESCENDING).limit(10)
         for tweet in top_tweets:
             print(tweet)
+    def get_details_list(self, result):
+        L= []
+        for detail in result:
+            L.append(detail)
+        return L
+
 
 #Constructor calling
 #tweet_query = TweetQuery()
