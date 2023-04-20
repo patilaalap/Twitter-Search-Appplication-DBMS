@@ -1,7 +1,15 @@
-import sqlite3
+import pymysql
+
+# establish connection to database
+conn = pymysql.connect(user='root',
+                              password='RushabhK',
+                              host='localhost',
+                              database = 'user_db',
+                              )
+cursor = conn.cursor()
 import pandas as pd
 
-covid2 = pd.read_json('corona-out-2',lines = True)
+covid2 = pd.read_json('corona-out-3',lines = True)
 
 df = pd.json_normalize(covid2['user'])
 # adding timestamp column
@@ -16,44 +24,47 @@ df = df.drop(['translator_type', 'protected', 'utc_offset', 'time_zone', 'geo_en
                 'profile_banner_url', 'default_profile', 'default_profile_image', 'following',
                 'follow_request_sent', 'notifications'], axis=1)
 
-conn = sqlite3.connect('user_db.db')
+#conn = sqlite3.connect('user_db.db')
 
 for i, row in df.iterrows():
     # Define the SQL query to check if id already exists in the table
     check_query = f"""
-    SELECT id, timestamp FROM user WHERE id={row['id']}
+    SELECT id_str, timestamp FROM user WHERE id_str={row['id_str']}
     """
-    result = conn.execute(check_query).fetchone()
+    cursor.execute(check_query)
+    result = cursor.fetchone()
 
     # If id doesn't exist, insert the row into the table
-    if not result:
+    if result is None:
         insert_query = """
-        INSERT INTO user (id, id_str, name, screen_name, location, url, description, verified, followers_count,
+        INSERT INTO user (id_str, name, screen_name, location, url, description, verified, followers_count,
                            friends_count, listed_count, favourites_count, statuses_count, created_at, timestamp)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
         """
-        conn.execute(insert_query,
-                     (row['id'], row['id_str'], row['name'], row['screen_name'], row['location'], row['url'],
+        cursor.execute(insert_query,
+                     (row['id_str'], row['name'], row['screen_name'], row['location'], row['url'],
                       row['description'], row['verified'], row['followers_count'], row['friends_count'],
                       row['listed_count'], row['favourites_count'], row['statuses_count'], row['created_at'],
                       row['timestamp']))
-        conn.commit()
+        #cursor.commit()
 
     # If id already exists and the new timestamp is greater, update the row
     elif row['timestamp'] > result[1]:
         update_query = """
-            UPDATE user SET id_str=?, name=?, screen_name=?, location=?, url=?, description=?, 
-            verified=?, followers_count=?, friends_count=?, listed_count=?, favourites_count=?, 
-            statuses_count=?, created_at=?, timestamp=?
-            WHERE id=?
+            UPDATE user SET id_str=%s, name=%s, screen_name=%s, location=%s, url=%s, description=%s, 
+            verified=%s, followers_count=%s, friends_count=%s, listed_count=%s, favourites_count=%s, 
+            statuses_count=%s, created_at=%s, timestamp=%s
+            WHERE id_str=%s
             """
-        conn.execute(update_query, (row['id_str'], row['name'], row['screen_name'], row['location'], row['url'],
+        cursor.execute(update_query, (row['id_str'], row['name'], row['screen_name'], row['location'], row['url'],
                                     row['description'], row['verified'], row['followers_count'], row['friends_count'],
                                     row['listed_count'], row['favourites_count'], row['statuses_count'],
                                     row['created_at'],
-                                    row['timestamp'], row['id']))
-        conn.commit()
+                                    row['timestamp'], row['id_str']))
+        #conn.commit()
 
     # If id already exists and the new timestamp is less than or equal to the old timestamp, skip the row
     else:
         continue
+
+    conn.commit()

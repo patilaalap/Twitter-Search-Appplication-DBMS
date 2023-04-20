@@ -19,14 +19,14 @@ class UserDatabase:
         result = self.cursor.fetchall()
         return result
 
-    def get_top_ten(self):
-        sql = f"SELECT name, screen_name from user ORDER BY followers_count DESC LIMIT 10"
+    def get_userdetails(self,Uname):
+        sql = f"SELECT name, screen_name,location,description,followers_count,friends_count,created_at from user WHERE screen_name = '{Uname}'"
         self.cursor.execute(sql)
         result = self.cursor.fetchall()
         return result
 
-    def get_userdetails(self,Uname):
-        sql = f"SELECT name, screen_name,location,description,followers_count,friends_count,created_at from user WHERE screen_name = '{Uname}'"
+    def get_top_ten(self,Uname):
+        sql = f"SELECT name, screen_name from user ORDER BY followers_count DESC LIMIT 10'"
         self.cursor.execute(sql)
         result = self.cursor.fetchall()
         return result
