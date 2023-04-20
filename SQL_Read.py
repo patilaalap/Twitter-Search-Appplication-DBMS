@@ -17,16 +17,22 @@ class UserDatabase:
         self.cursor.execute(sql)
         #self.cursor.execute("SELECT * FROM user WHERE id_str = '804046791348015107'")
         result = self.cursor.fetchall()
-        return result
+        return get_userdetails_list(result)
 
     def get_userdetails(self,Uname):
         sql = f"SELECT name, screen_name,location,description,followers_count,friends_count,created_at from user WHERE screen_name = '{Uname}'"
         self.cursor.execute(sql)
         result = self.cursor.fetchall()
-        return result
+        return get_userdetails_list(result)
 
     def get_top_ten(self,Uname):
         sql = f"SELECT name, screen_name from user ORDER BY followers_count DESC LIMIT 10'"
         self.cursor.execute(sql)
         result = self.cursor.fetchall()
-        return result
+        return get_userdetails_list(result)
+
+    def get_userdetails_list(self, result):
+        L= []
+        for detail in result:
+            L.append(detail)
+        return L
