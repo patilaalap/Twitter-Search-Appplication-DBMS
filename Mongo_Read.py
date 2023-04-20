@@ -6,6 +6,7 @@ class TweetQuery:
         self.client = pymongo.MongoClient("localhost", 27017)
         self.db = self.client["twitter-covid2_updated"]
         self.collection = self.db["tweets"]
+        self.collection = self.db["comments"]
 
     def query_tweets_by_regex(self, regex_pattern):
         # Query tweets that match the regex pattern in the text field, ordered by popularity, and limit the results by 10
@@ -14,6 +15,37 @@ class TweetQuery:
 
     def print_tweets_regex(self, tweets):
         for tweet in tweets:
+            print(tweet)
+
+    def search_tweets_by_hashtags(self, hashtags):
+        query = {"hashtags": {"$in": [hashtags]}}
+        limit = 10
+        tweets = self.collection.find(query,{'text':1,'_id':0}).sort("popularity", pymongo.DESCENDING).limit(limit)
+        return tweets
+
+    def print_tweets(self, tweets):
+        for tweet in tweets:
+            print(tweet)
+
+    def get_tweet_details(self, tweet_id):
+        tweet = self.collection.find_one({"id_str": tweet_id})
+        if tweet:
+            print(tweet)
+        else:
+            return None
+
+    def get_comments_for_tweet(self, tweet_id):
+        comments = self.collection.find({"in_reply_to_status_id_str": tweet_id}).sort("created_at", pymongo.ASCENDING)
+
+        return comments
+
+    def get_tweets_by_username(self, username):
+        tweets = collection.find({"user_name": username})
+        return [tweet for tweet in tweets]
+
+    def get_top_10_popular_tweets(self):
+        top_tweets = self.collection.find().sort("popularity", pymongo.DESCENDING).limit(10)
+        for tweet in top_tweets:
             print(tweet)
 
 #Constructor calling
@@ -27,21 +59,8 @@ class TweetQuery:
 #print(tweets)
 #tweet_query.print_tweets_regex(tweets)
 
-class TweetQuery_Hashtag:
-    def __init__(self):
-        self.client = pymongo.MongoClient("localhost", 27017)
-        self.db = self.client["twitter-covid2_updated"]
-        self.collection = self.db["tweets"]
 
-    def search_tweets_by_hashtags(self, hashtags):
-        query = {"hashtags": {"$in": [hashtags]}}
-        limit = 10
-        tweets = self.collection.find(query,{'text':1,'_id':0}).sort("popularity", pymongo.DESCENDING).limit(limit)
-        return tweets
 
-    def print_tweets(self, tweets):
-        for tweet in tweets:
-            print(tweet)
 
 #hashtag = TweetQuery_Hashtag()
 #hashtags = input("Enter the hashtag pattern: ")
@@ -51,3 +70,8 @@ class TweetQuery_Hashtag:
 #hashtag.print_tweets(tweets)
 #print(tweets)
 #tweet_query.print_tweets_regex(tweets)
+
+
+
+
+
