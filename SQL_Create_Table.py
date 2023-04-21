@@ -49,6 +49,18 @@ CREATE TABLE user (
 # Execute the SQL query to create the table
 cursor.execute(sql)
 
+# Creating the retweets table
+sql = """
+CREATE TABLE retweets (
+    id_str VARCHAR(255),
+    original_tweet_id TEXT,
+    user_id_str VARCHAR(255),
+    screen_name TEXT
+);
+"""
+
+# Execute the SQL query to create the table
+cursor.execute(sql)
 
 # Commit the changes and close the connection
 #conn.commit()
