@@ -68,6 +68,32 @@ with open("corona-out-2", "r") as f1:
                         pop = result['popularity']
                         pop += calc_popularity(row)
                         tweet_coll.update_one({'id_str': data['id_str']}, {"$set": {"popularity": pop}})
+                else:
+                    result = comments_coll.find_one({'id_str': data['id_str']})
+                    if result is None:
+                        comment = {
+                            'created_at': data['created_at'],
+                            'id_str': data['id_str'],
+                            'user_id': data['user']['id_str'],
+                            'user_name': data['user']['screen_name'],
+                            'text': data['text'],
+                            'truncated': data['truncated'],
+                            'is_quote_status': data['is_quote_status'],
+                            'quote_count': data['quote_count'],
+                            'reply_count': data['reply_count'],
+                            'retweet_count': data['retweet_count'],
+                            'favorite_count': data['favorite_count'],
+                            'lang': data['lang'],
+                            'in_reply_to_status_id_str': data['in_reply_to_status_id_str'],
+                            'in_reply_to_user_id_str': data['in_reply_to_user_id_str'],
+                            'in_reply_to_screen_name': data['in_reply_to_screen_name']
+                        }
+                        if data['truncated'] is True:
+                            comment['extended_tweet'] = data['extended_tweet']
+                        if data['is_quote_status'] is True:
+                            comment['quoted_status_id_str'] = data['quoted_status_id_str']
+                            comment['quoted_status'] = row['quoted_status']
+                        comments_coll.insert_one(comment)
             elif row['in_reply_to_status_id_str'] is None:
                 result = tweet_coll.find_one({'id_str' : row['id_str']})
                 if result is None:
@@ -80,7 +106,7 @@ with open("corona-out-2", "r") as f1:
                         'created_at': row['created_at'],
                         'id_str': row['id_str'],
                         'user_id': row['user']['id_str'],
-                        'user_name': data['user']['screen_name'],
+                        'user_name': row['user']['screen_name'],
                         'text': row['text'],
                         'truncated': row['truncated'],
                         'is_quote_status': row['is_quote_status'],
@@ -112,7 +138,7 @@ with open("corona-out-2", "r") as f1:
                         'created_at': row['created_at'],
                         'id_str': row['id_str'],
                         'user_id': row['user']['id_str'],
-                        'user_name': data['user']['screen_name'],
+                        'user_name': row['user']['screen_name'],
                         'text': row['text'],
                         'truncated': row['truncated'],
                         'is_quote_status': row['is_quote_status'],

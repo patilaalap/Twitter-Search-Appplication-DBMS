@@ -10,17 +10,17 @@ class TweetQuery:
 
     def query_tweets_by_regex(self, regex_pattern):
         # Query tweets that match the regex pattern in the text field, ordered by popularity, and limit the results by 10
-        tweets = self.coll_tweets.find({"text": {"$regex": regex_pattern, "$options": "i"}},{'text':1,'id_str':1, '_id':0}).sort("popularity", pymongo.DESCENDING).limit(10)
+        tweets = self.coll_tweets.find({"text": {"$regex": regex_pattern, "$options": "i"}}).sort("popularity", pymongo.DESCENDING).limit(10)
         return self.get_details_list(tweets)
 
     def search_tweets_by_hashtags(self, hashtags):
         query = {"hashtags": {"$in": [hashtags]}}
         limit = 10
-        tweets = self.coll_tweets.find(query,{'text':1,'_id':0}).sort("popularity", pymongo.DESCENDING).limit(limit)
+        tweets = self.coll_tweets.find(query).sort("popularity", pymongo.DESCENDING).limit(limit)
         return self.get_details_list(tweets)
 
     def get_tweet_details(self, tweet_id):
-        tweet = self.coll_tweets.find_one({"id_str": tweet_id})
+        tweet = self.coll_tweets.find({"id_str": tweet_id})
         return self.get_details_list(tweet)
 
     def get_comments_for_tweet(self, tweet_id):
@@ -33,8 +33,7 @@ class TweetQuery:
 
     def get_top_10_popular_tweets(self):
         top_tweets = self.coll_tweets.find().sort("popularity", pymongo.DESCENDING).limit(10)
-        for tweet in top_tweets:
-            print(tweet)
+        return self.get_details_list(top_tweets)
     def get_details_list(self, result):
         L= []
         for detail in result:
