@@ -40,6 +40,10 @@ class TweetQuery:
             L.append(detail)
         return L
 
+    def get_sentiment(self,tweet_id):
+        sentiment = self.coll_tweets.find({"id_str": tweet_id},{"sentiment":1,"_id":0})
+        return self.get_details_list(sentiment)
+
 
 #Constructor calling
 #tweet_query = TweetQuery()

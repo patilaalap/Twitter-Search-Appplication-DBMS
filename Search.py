@@ -130,6 +130,16 @@ def tweet_details(event):
             display_comments(rows['id_str'], 5)
         else:
             display_comments(rows['id_str'], 4)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="Get Sentiment", command=lambda: get_sentiment(label_text))
+    buttonCommit.grid(column = 1)
+    tk.mainloop()
+
+def get_sentiment(label_text):
+    print("Sentiment")
+    y = tweet_obj.get_sentiment(label_text)
+    for rows in y:
+        link1 = tk.Label(frame, text=rows['sentiment'], font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link1.grid(column = 1)
     tk.mainloop()
 
 
@@ -165,6 +175,7 @@ def top_10_users():
 
 
 def top_10_tweets():
+    clear_frame()
     tweets = tweet_obj.get_top_10_popular_tweets()
     i = 0
     for rows in tweets:
