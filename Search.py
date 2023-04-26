@@ -1,10 +1,9 @@
 from SQL_Read import UserDatabase
 from Mongo_Read import TweetQuery
 from Cache import Cache
-
 import tkinter as tk
 import re
-
+import time
 
 tweet_obj = TweetQuery()
 user_obj = UserDatabase()
@@ -23,29 +22,40 @@ def retrieve_input():
     pattern_hashtag = r"^#"
     clear_frame()
     if re.match(pattern,x):
+        tk.Label(frame, text="Username", font=('Helveticabold', 15, "bold")).grid(row=5, column=0)
+        tk.Label(frame, text="Account Name", font=('Helveticabold', 15, "bold")).grid(row=5, column=1)
         in_Cache = cache_obj.is_present_in_cache(x[1:])
         if in_Cache == True:
             i = 0
             print("From Cache")
+            start = time.time()
             y = cache_obj.retrieve_from_cache(x[1:])
+            end = time.time()
+            disp = f"Time to retrieve {end - start:.10f}"
+            tk.Label(frame, text=disp).grid(row=4)
             for j in range(len(y)-1):
                 link = tk.Label(frame, text=y[j][1], font=('Helveticabold', 15), fg="blue", cursor="hand2")
-                link.grid(row=i + 4, column=0)
+                link.grid(row=i + 6, column=0)
                 link.bind("<Button-1>", lambda event: user_details(event))
                 link = tk.Label(frame, text=y[j][0], font=('Helveticabold', 15))
-                link.grid(row=i + 4, column=1)
+                link.grid(row=i + 6, column=1)
                 i = i + 1
         else:
+            start = time.time()
             y = user_obj.get_user_by_name(x[1:],offset)
+            end = time.time()
+            disp = f"Time to retrieve {end - start:.10f}"
+            tk.Label(frame, text=disp).grid(row=4)
             print("No cache")
             i = 0
             for rows in y:
                 link = tk.Label(frame, text=rows[1], font=('Helveticabold', 15), fg="blue", cursor="hand2")
-                link.grid(row=i + 4, column = 0)
+                link.grid(row=i + 6, column = 0)
                 link.bind("<Button-1>", lambda event: user_details(event))
                 link = tk.Label(frame, text=rows[0], font=('Helveticabold', 15))
-                link.grid(row=i + 4, column=1)
+                link.grid(row=i + 6, column=1)
                 i = i+1
+            print(type(y))
             cache_obj.add_in_cache(x[1:],y)
         buttonCommit = tk.Button(frame, height=1, width=10, text="Show more", command=lambda: show_more(x,offset+10))
         buttonCommit.grid()
@@ -53,44 +63,103 @@ def retrieve_input():
     elif re.match(pattern_hashtag,x):
         # Cache
         print("# pattern")
-        tweets = tweet_obj.search_tweets_by_hashtags(x[1:])
-        i = 0
-        for rows in tweets:
-            t_id = rows['id_str']
-            link1 = tk.Label(frame, text=t_id, font=('Helveticabold', 15), fg="blue", cursor="hand2")
-            link1.grid(row=i + 4, column=0)
-            link1.bind("<Button-1>", lambda event: tweet_details(event))
-            u_name = rows['user_name']
-            link2 = tk.Label(frame, text=u_name, font=('Helveticabold', 15), fg="blue", cursor="hand2")
-            link2.grid(row=i + 4, column=1)
-            link2.bind("<Button-1>", lambda event: user_details(event))
-            tweet = rows['text']
-            link3 = tk.Label(frame, text=tweet, font=('Helveticabold', 15))
-            link3.grid(row=i + 4, column=2)
-            i = i + 1
-        # cache_obj.add_in_cache(x[1:], y)
+        tk.Label(frame, text="Tweet ID", font=('Helveticabold', 15, "bold")).grid(row=5, column=0)
+        tk.Label(frame, text="User Name", font=('Helveticabold', 15, "bold")).grid(row=5, column=1)
+        tk.Label(frame, text="Tweet", font=('Helveticabold', 15, "bold")).grid(row=5, column=2)
+        in_Cache = cache_obj.is_present_in_cache(x[1:])
+        if in_Cache == True:
+            i = 0
+            print("From Cache")
+            start = time.time()
+            y = cache_obj.retrieve_from_cache(x[1:])
+            end = time.time()
+            disp = f"Time to retrieve {end - start:.10f}"
+            tk.Label(frame, text=disp).grid(row=4)
+            for j in range(len(y) - 1):
+                t_id = y[j]['id_str']
+                link1 = tk.Label(frame, text=t_id, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+                link1.grid(row=i + 6, column=0, sticky="n")
+                link1.bind("<Button-1>", lambda event: tweet_details(event))
+                u_name = y[j]['user_name']
+                link2 = tk.Label(frame, text=u_name, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+                link2.grid(row=i + 6, column=1, sticky="n")
+                link2.bind("<Button-1>", lambda event: user_details(event))
+                tweet = y[j]['text']
+                link3 = tk.Label(frame, text=tweet, font=('Helveticabold', 15))
+                link3.grid(row=i + 6, column=2)
+                i = i + 1
+        else:
+            start = time.time()
+            tweets = tweet_obj.search_tweets_by_hashtags(x[1:])
+            end = time.time()
+            disp = f"Time to retrieve {end - start:.10f}"
+            tk.Label(frame, text=disp).grid(row=4)
+            i = 0
+            for rows in tweets:
+                t_id = rows['id_str']
+                link1 = tk.Label(frame, text=t_id, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+                link1.grid(row=i + 6, column=0, sticky="n")
+                link1.bind("<Button-1>", lambda event: tweet_details(event))
+                u_name = rows['user_name']
+                link2 = tk.Label(frame, text=u_name, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+                link2.grid(row=i + 6, column=1, sticky="n")
+                link2.bind("<Button-1>", lambda event: user_details(event))
+                tweet = rows['text']
+                link3 = tk.Label(frame, text=tweet, font=('Helveticabold', 15))
+                link3.grid(row=i + 6, column=2)
+                i = i + 1
+            print(type(tweets))
+            cache_obj.add_in_cache(x[1:], tweets)
         # buttonCommit = tk.Button(frame, height=1, width=10, text="Show more", command=lambda: show_more(x, offset + 10))
         # buttonCommit.grid()
         tk.mainloop()
     else:
-        # Cache
-        tweets = tweet_obj.query_tweets_by_regex(x)
-        i = 0
-        for rows in tweets:
-            t_id = rows['id_str']
-            link1 = tk.Label(frame, text=t_id, font=('Helveticabold', 15), fg="blue", cursor="hand2")
-            link1.grid(row=i + 4, column=0)
-            link1.bind("<Button-1>", lambda event: tweet_details(event))
-            u_name = rows['user_name']
-            link2 = tk.Label(frame, text=u_name, font=('Helveticabold', 15), fg="blue", cursor="hand2")
-            link2.grid(row=i + 4, column=1)
-            link2.bind("<Button-1>", lambda event: user_details(event))
-            tweet = rows['text']
-            link3 = tk.Label(frame, text=tweet, font=('Helveticabold', 15))
-            link3.grid(row=i + 4, column=2)
-
-            i = i + 1
-        #cache_obj.add_in_cache(x[1:], y)
+        tk.Label(frame, text="Tweet ID", font=('Helveticabold', 15, "bold")).grid(row=5, column=0)
+        tk.Label(frame, text="User Name", font=('Helveticabold', 15, "bold")).grid(row=5, column=1)
+        tk.Label(frame, text="Tweet", font=('Helveticabold', 15, "bold")).grid(row=5, column=2)
+        in_Cache = cache_obj.is_present_in_cache(x)
+        if in_Cache == True:
+            i = 0
+            print("From Cache")
+            start = time.time()
+            y = cache_obj.retrieve_from_cache(x)
+            end = time.time()
+            disp = f"Time to retrieve {end - start:.10f}"
+            tk.Label(frame, text=disp).grid(row=4)
+            for j in range(len(y) - 1):
+                t_id = y[j]['id_str']
+                link1 = tk.Label(frame, text=t_id, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+                link1.grid(row=i + 6, column=0, sticky="n")
+                link1.bind("<Button-1>", lambda event: tweet_details(event))
+                u_name = y[j]['user_name']
+                link2 = tk.Label(frame, text=u_name, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+                link2.grid(row=i + 6, column=1, sticky="n")
+                link2.bind("<Button-1>", lambda event: user_details(event))
+                tweet = y[j]['text']
+                link3 = tk.Label(frame, text=tweet, font=('Helveticabold', 15))
+                link3.grid(row=i + 6, column=2)
+                i = i + 1
+        else:
+            i = 0
+            start = time.time()
+            tweets = tweet_obj.query_tweets_by_regex(x)
+            end = time.time()
+            disp = f"Time to retrieve {end - start:.10f}"
+            tk.Label(frame, text=disp).grid(row=4)
+            for rows in tweets:
+                t_id = rows['id_str']
+                link1 = tk.Label(frame, text=t_id, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+                link1.grid(row=i + 6, column=0, sticky="n")
+                link1.bind("<Button-1>", lambda event: tweet_details(event))
+                u_name = rows['user_name']
+                link2 = tk.Label(frame, text=u_name, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+                link2.grid(row=i + 6, column=1, sticky="n")
+                link2.bind("<Button-1>", lambda event: user_details(event))
+                tweet = rows['text']
+                link3 = tk.Label(frame, text=tweet, font=('Helveticabold', 15))
+                link3.grid(row=i + 6, column=2)
+                i = i + 1
+            cache_obj.add_in_cache(x, tweets)
         #buttonCommit = tk.Button(frame, height=1, width=10, text="Show more", command=lambda: show_more(x, offset + 10))
         #buttonCommit.grid()
         tk.mainloop()
@@ -116,22 +185,37 @@ def tweet_details(event):
     tweet_det = tweet_obj.get_tweet_details(label_text)
     for rows in tweet_det:
         link1 = tk.Label(frame, text=rows['user_name'], font=('Helveticabold', 15), fg="blue", cursor="hand2")
-        link1.grid(row=2, column=0)
+        link1.grid(row=5, column=0)
         link1.bind("<Button-1>", lambda event: user_details(event))
         if rows['truncated'] is True:
-            tk.Label(frame, text=rows['extended_tweet']['full_text'], font=('Helveticabold', 15)).grid(row=2, column=1)
+            tk.Label(frame, text=rows['extended_tweet']['full_text'], font=('Helveticabold', 14)).grid(row=5, column=1)
         else:
-            tk.Label(frame, text=rows['text'], font=('Helveticabold', 15)).grid(row=2, column=1)
+            tk.Label(frame, text=rows['text'], font=('Helveticabold', 15)).grid(row=5, column=1)
         disp = "Likes: "+str(rows['favorite_count']) + " Retweets: " + str(rows['retweet_count']) +\
                " Comments: " + str(rows['reply_count'])
-        tk.Label(frame, text=disp, font=('Helveticabold', 15)).grid(row=3, column=1)
+        tk.Label(frame, text=disp, font=('Helveticabold', 15)).grid(row=6, column=1)
         if rows['is_quote_status'] is True:
-            tk.Label(frame, text="Quote", font=('Helveticabold', 15)).grid(row=4)
-            display_comments(rows['id_str'], 5)
+            link1 = tk.Label(frame, text=rows['quoted_status']['user']['screen_name'], font=('Helveticabold', 15),
+                             fg="blue", cursor="hand2")
+            link1.grid(row=7, column=0)
+            link1.bind("<Button-1>", lambda event: user_details(event))
+            link2 = tk.Label(frame, text=rows['quoted_status']['id_str'], font=('Helveticabold', 15),
+                             fg="blue", cursor="hand2")
+            link2.grid(row=8, column=0)
+            link2.bind("<Button-1>", lambda event: tweet_details(event))
+            tk.Label(frame, text=rows['quoted_status']['text'], font=('Helveticabold', 15), borderwidth=1,
+                     relief="sunken").grid(row=8, column=1, sticky="w")
+            i = 9
         else:
-            display_comments(rows['id_str'], 4)
-    buttonCommit = tk.Button(frame, height=1, width=10, text="Get Sentiment", command=lambda: get_sentiment(label_text))
-    buttonCommit.grid(column = 1)
+            i = 7
+        button1 = tk.Button(frame, height=1, width=10, text="Retweets",
+                            command=lambda: display_retweets(rows['id_str'], i+2))
+        button1.grid(row = i, column=1)
+        button2 = tk.Button(frame, height=1, width=10, text="Comments",
+                            command=lambda: display_comments(rows['id_str'], i+2))
+        button2.grid(row=i+1, column=1)
+    #buttonCommit = tk.Button(frame, height=1, width=10, text="Get Sentiment", command=lambda: get_sentiment(label_text))
+    #buttonCommit.grid(column = 1)
     tk.mainloop()
 
 def get_sentiment(label_text):
@@ -147,13 +231,14 @@ def show_more(x,offset):
     clear_frame()
     y = user_obj.get_user_by_name(x[1:], offset)
     i = 0
+    tk.Label(frame, text="Username", font=('Helveticabold', 15, "bold")).grid(row=4, column=0)
+    tk.Label(frame, text="Account Name", font=('Helveticabold', 15, "bold")).grid(row=4, column=1)
     for rows in y:
-        uname = rows[1]
         link = tk.Label(frame, text=rows[1], font=('Helveticabold', 15), fg="blue", cursor="hand2")
-        link.grid(row=i + 3, column=0)
+        link.grid(row=i + 5, column=0)
         link.bind("<Button-1>", lambda event: user_details(event))
         link = tk.Label(frame, text=rows[0], font=('Helveticabold', 15))
-        link.grid(row=i + 3, column=1)
+        link.grid(row=i + 5, column=1)
         i = i + 1
     buttonCommit = tk.Button(frame, height=1, width=10, text="Show more", command=lambda: show_more(x, offset + 10))
     buttonCommit.grid()
@@ -164,12 +249,14 @@ def top_10_users():
     y = user_obj.get_top_ten()
     i = 0
     clear_frame()
+    tk.Label(frame, text="User Name", font=('Helveticabold', 15, "bold")).grid(row=4, column=0)
+    tk.Label(frame, text="Account Name", font=('Helveticabold', 15, "bold")).grid(row=4, column=1)
     for rows in y:
         link = tk.Label(frame, text=rows[1], font=('Helveticabold', 15), fg="blue", cursor="hand2")
-        link.grid(row=i + 4, column=0)
+        link.grid(row=i + 5, column=0)
         link.bind("<Button-1>", lambda event: user_details(event))
         link = tk.Label(frame, text=rows[0], font=('Helveticabold', 15))
-        link.grid(row=i + 4, column=1)
+        link.grid(row=i + 5, column=1)
         i = i + 1
     tk.mainloop()
 
@@ -178,51 +265,70 @@ def top_10_tweets():
     clear_frame()
     tweets = tweet_obj.get_top_10_popular_tweets()
     i = 0
+    tk.Label(frame, text="Tweet ID", font=('Helveticabold', 15, "bold")).grid(row=4, column=0)
+    tk.Label(frame, text="User Name", font=('Helveticabold', 15, "bold")).grid(row=4, column=1)
+    tk.Label(frame, text="Tweet", font=('Helveticabold', 15, "bold")).grid(row=4, column=2)
     for rows in tweets:
         t_id = rows['id_str']
         link1 = tk.Label(frame, text=t_id, font=('Helveticabold', 15), fg="blue", cursor="hand2")
-        link1.grid(row=i + 4, column=0)
+        link1.grid(row=i + 5, column=0, sticky="n")
         link1.bind("<Button-1>", lambda event: tweet_details(event))
         u_name = rows['user_name']
         link2 = tk.Label(frame, text=u_name, font=('Helveticabold', 15), fg="blue", cursor="hand2")
-        link2.grid(row=i + 4, column=1)
+        link2.grid(row=i + 5, column=1, sticky="n")
         link2.bind("<Button-1>", lambda event: user_details(event))
         tweet = rows['text']
         link3 = tk.Label(frame, text=tweet, font=('Helveticabold', 15))
-        link3.grid(row=i + 4, column=2)
+        link3.grid(row=i + 5, column=2)
         i = i + 1
 def user_tweets(uname):
     tweets = tweet_obj.get_tweets_by_username(uname)
     clear_frame()
     i = 0
+    tk.Label(frame, text="Tweet ID", font=('Helveticabold', 15, "bold")).grid(row=4, column=0)
+    tk.Label(frame, text="User Name", font=('Helveticabold', 15, "bold")).grid(row=4, column=1)
+    tk.Label(frame, text="Tweet", font=('Helveticabold', 15, "bold")).grid(row=4, column=2)
     for rows in tweets:
         t_id = rows['id_str']
         link1 = tk.Label(frame, text=t_id, font=('Helveticabold', 15), fg="blue", cursor="hand2")
-        link1.grid(row=i + 4, column=0)
+        link1.grid(row=i + 5, column=0)
         link1.bind("<Button-1>", lambda event: tweet_details(event))
         u_name = rows['user_name']
         link2 = tk.Label(frame, text=u_name, font=('Helveticabold', 15), fg="blue", cursor="hand2")
-        link2.grid(row=i + 4, column=1)
+        link2.grid(row=i + 5, column=1)
         link2.bind("<Button-1>", lambda event: user_details(event))
         tweet = rows['text']
         link3 = tk.Label(frame, text=tweet, font=('Helveticabold', 15))
-        link3.grid(row=i + 4, column=2)
-
+        link3.grid(row=i + 5, column=2)
         i = i + 1
     tk.mainloop()
 
 def display_comments(uid, i):
     comments = tweet_obj.get_comments_for_tweet(uid)
-    print(uid)
+    tk.Label(frame, text="Comments", font=('Helveticabold', 15, "bold")).grid(row=i, column=1)
+    i += 1
     for rows in comments:
-        tk.Label(frame, text=rows['user_name'], fg="blue").grid(row=i, column=1)
-        tk.Label(frame, text=rows['text']).grid(row=i, column=2)
+        link1 = tk.Label(frame, text=rows['user_name'], font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link1.grid(row=i, column=0)
+        link1.bind("<Button-1>", lambda event: user_details(event))
+        tk.Label(frame, text=rows['text']).grid(row=i, column=1)
         i += 1
+
+def display_retweets(tid, i):
+    retweets = user_obj.retweets(tid)
+    tk.Label(frame, text="Users who retweeted", font=('Helveticabold', 15, "bold")).grid(row=i, column=1)
+    i += 1
+    for rows in retweets:
+        link1 = tk.Label(frame, text=rows[0], font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link1.grid(row=i, column=1)
+        link1.bind("<Button-1>", lambda event: user_details(event))
+        i += 1
+
 
 master = tk.Tk()
 master.title('Twitter search application')
 master.geometry("1920x1080")
-tk.Label(master, text='Search').grid(row=0)
+tk.Label(master, height=1, text='Search').grid(row=0)
 e1 = tk.Entry(master)
 e1.grid(row=1)
 buttonCommit = tk.Button(master, height=1, width=10, text="Search", command=lambda: retrieve_input())
