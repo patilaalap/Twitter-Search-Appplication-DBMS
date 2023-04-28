@@ -24,12 +24,12 @@ def retrieve_input():
     if re.match(pattern,x):
         tk.Label(frame, text="Username", font=('Helveticabold', 15, "bold")).grid(row=5, column=0)
         tk.Label(frame, text="Account Name", font=('Helveticabold', 15, "bold")).grid(row=5, column=1)
-        in_Cache = cache_obj.is_present_in_cache(x[1:])
+        in_Cache = cache_obj.is_present_in_cache(x)
         if in_Cache == True:
             i = 0
             print("From Cache")
             start = time.time()
-            y = cache_obj.retrieve_from_cache(x[1:])
+            y = cache_obj.retrieve_from_cache(x)
             end = time.time()
             disp = f"Time to retrieve {end - start:.10f}"
             tk.Label(frame, text=disp).grid(row=4)
@@ -56,7 +56,7 @@ def retrieve_input():
                 link.grid(row=i + 6, column=1)
                 i = i+1
             print(type(y))
-            cache_obj.add_in_cache(x[1:],y)
+            cache_obj.add_in_cache(x,y)
         buttonCommit = tk.Button(frame, height=1, width=10, text="Show more", command=lambda: show_more(x,offset+10))
         buttonCommit.grid()
         tk.mainloop()
@@ -66,12 +66,12 @@ def retrieve_input():
         tk.Label(frame, text="Tweet ID", font=('Helveticabold', 15, "bold")).grid(row=5, column=0)
         tk.Label(frame, text="User Name", font=('Helveticabold', 15, "bold")).grid(row=5, column=1)
         tk.Label(frame, text="Tweet", font=('Helveticabold', 15, "bold")).grid(row=5, column=2)
-        in_Cache = cache_obj.is_present_in_cache(x[1:])
+        in_Cache = cache_obj.is_present_in_cache(x)
         if in_Cache == True:
             i = 0
             print("From Cache")
             start = time.time()
-            y = cache_obj.retrieve_from_cache(x[1:])
+            y = cache_obj.retrieve_from_cache(x)
             end = time.time()
             disp = f"Time to retrieve {end - start:.10f}"
             tk.Label(frame, text=disp).grid(row=4)
@@ -109,7 +109,7 @@ def retrieve_input():
                 link3.grid(row=i + 6, column=2)
                 i = i + 1
             print(type(tweets))
-            cache_obj.add_in_cache(x[1:], tweets)
+            cache_obj.add_in_cache(x, tweets)
         # buttonCommit = tk.Button(frame, height=1, width=10, text="Show more", command=lambda: show_more(x, offset + 10))
         # buttonCommit.grid()
         tk.mainloop()
