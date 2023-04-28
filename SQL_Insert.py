@@ -2,7 +2,7 @@ import json
 import sys
 import pymysql
 
-# establish connection to database
+# Establish connection to MySQL database
 conn = pymysql.connect(user='root',
                               password='#Aalap21',
                               host='localhost',
@@ -10,6 +10,7 @@ conn = pymysql.connect(user='root',
                               )
 cursor = conn.cursor()
 
+# Reading the corona-out-3 JSON file
 line_ctr = 0
 with open("corona-out-3", "r") as f1:
     for line in f1:
@@ -17,7 +18,7 @@ with open("corona-out-3", "r") as f1:
         try:
             data = json.loads(line)
             row = data['user']
-            # Define the SQL query to check if id already exists in the table
+            # SQL query to check if the user id already exists in the table
             check_query = f"""
             SELECT id_str, timestamp FROM user WHERE id_str={row['id_str']}
             """
@@ -38,7 +39,8 @@ with open("corona-out-3", "r") as f1:
                               data['timestamp_ms']))
                 #cursor.commit()
 
-            # If id already exists and the new timestamp is greater, update the row
+            # If id already exists and the new timestamp is greater i.e. more recent, update the row
+            # If id already exists and the new timestamp is less than or equal to the old timestamp, skip the row
             elif data['timestamp_ms'] > result[1]:
                 update_query = """
                     UPDATE user SET id_str=%s, name=%s, screen_name=%s, location=%s, url=%s, description=%s, 
@@ -51,9 +53,9 @@ with open("corona-out-3", "r") as f1:
                                             row['listed_count'], row['favourites_count'], row['statuses_count'],
                                             row['created_at'],
                                             data['timestamp_ms'], row['id_str']))
-                #conn.commit()
 
-            # If id already exists and the new timestamp is less than or equal to the old timestamp, skip the row
+
+            # Check if there is are users in the retweeted_status variable of the record
             if 'retweeted_status' in data.keys():
                 row = data['retweeted_status']['user']
                 # Define the SQL query to check if id already exists in the table
@@ -76,9 +78,9 @@ with open("corona-out-3", "r") as f1:
                                     row['listed_count'], row['favourites_count'], row['statuses_count'],
                                     row['created_at'],
                                     data['timestamp_ms']))
-                    # cursor.commit()
 
-                # If id already exists and the new timestamp is greater, update the row
+
+                # If id already exists and the new timestamp is greater i.e. more recent, update the row
                 elif data['timestamp_ms'] > result[1]:
                     update_query = """
                                     UPDATE user SET id_str=%s, name=%s, screen_name=%s, location=%s, url=%s, description=%s, 
@@ -92,7 +94,9 @@ with open("corona-out-3", "r") as f1:
                                     row['listed_count'], row['favourites_count'], row['statuses_count'],
                                     row['created_at'],
                                     data['timestamp_ms'], row['id_str']))
-                    # conn.commit()
+
+
+            # check if there are users in the quoted_status variable of the record
             if 'quoted_status' in data.keys():
                 row = data['quoted_status']['user']
                 # Define the SQL query to check if id already exists in the table
@@ -115,9 +119,9 @@ with open("corona-out-3", "r") as f1:
                                     row['listed_count'], row['favourites_count'], row['statuses_count'],
                                     row['created_at'],
                                     data['timestamp_ms']))
-                    # cursor.commit()
 
-                # If id already exists and the new timestamp is greater, update the row
+
+                # If id already exists and the new timestamp is greater i.e. more recent, update the row
                 elif data['timestamp_ms'] > result[1]:
                     update_query = """
                                                     UPDATE user SET id_str=%s, name=%s, screen_name=%s, location=%s, url=%s, description=%s, 
@@ -131,7 +135,7 @@ with open("corona-out-3", "r") as f1:
                                     row['listed_count'], row['favourites_count'], row['statuses_count'],
                                     row['created_at'],
                                     data['timestamp_ms'], row['id_str']))
-                    # conn.commit()
+
         except Exception as e:
             if line_ctr%2 != 0:
                 print(line)
@@ -139,9 +143,9 @@ with open("corona-out-3", "r") as f1:
                 print(exc_type, exc_tb.tb_lineno)
                 break
 
-#conn.commit()
 
 line_ctr = 0
+# Read the corona-out-3 file
 with open("corona-out-3", "r") as f1:
     for line in f1:
         line_ctr += 1
@@ -154,7 +158,7 @@ with open("corona-out-3", "r") as f1:
                 cursor.execute(exists_query, (row['id_str'],))
                 exists = cursor.fetchone() is not None
                 if not exists:
-                    # insert the record into the retweets table
+                    # if doesn't exist, insert the record into the retweets table
                     insert_query = "INSERT INTO retweets VALUES (%s, %s, %s, %s)"
                     values = (row['id_str'], row['retweeted_status']['id_str'],
                               row['user']['id_str'], row['user']['screen_name'])
@@ -166,5 +170,5 @@ with open("corona-out-3", "r") as f1:
                 print(exc_type, exc_tb.tb_lineno)
                 break
 
-# commit the changes and close the connection
+# commit the changes
 conn.commit()
