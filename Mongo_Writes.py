@@ -1,14 +1,18 @@
 import json
 import sys
 import pymongo
+from datetime import datetime
 
+# Connection to Non-Relational Database
 client = pymongo.MongoClient("localhost", 27017)
+db = client['twitter-covid3']
 
-db = client['twitter-covid2_updated']
-
+# Variable for collections
 tweet_coll = db["tweets"]
 comments_coll = db["comments"]
 
+
+# Define a function to calculate popularity
 def calc_popularity(data):
     pop = 0
     pop += data['quote_count']*20
@@ -22,22 +26,29 @@ def calc_popularity(data):
 
 line_ctr = 0
 err_ctr = 0
-with open("corona-out-2", "r") as f1:
+# Read the data
+with open("corona-out-3", "r") as f1:
     for line in f1:
         line_ctr += 1
         try:
             row = json.loads(line)
-            # if RT is present in the retweet
+            # if RT is present in the tweet
             if row['text'][0:2] == 'RT':
+                # Some retweets in the data do not have retweeted_status field
                 if 'retweeted_status' not in row.keys():
                     continue
                 data = row['retweeted_status']
+                # Check if its a tweet or comment
                 if data['in_reply_to_status_id_str'] is None:
                     result = tweet_coll.find_one({'id_str' : data['id_str']})
+                    # Insert if the tweet does not already exist in database
                     if result is None:
                         pop = calc_popularity(data)
                         hash = []
-                        hash_data = data['entities']['hashtags']
+                        if data['truncated'] is True:
+                            hash_data = data['extended_tweet']['entities']['hashtags']
+                        else:
+                            hash_data = data['entities']['hashtags']
                         for i in hash_data:
                             hash.append(i['text'])
                         tweet = {'created_at': data['created_at'],
@@ -62,6 +73,9 @@ with open("corona-out-2", "r") as f1:
                             if 'quoted_status' not in row.keys():
                                 continue
                             tweet['quoted_status'] = row['quoted_status']
+                        dt = datetime.strptime(data['created_at'], "%a %b %d %H:%M:%S %z %Y")
+                        epoch_time = float(dt.timestamp())
+                        tweet['timestamp'] = epoch_time
                         tweet_coll.insert_one(tweet)
                     else:
                         #Update Popularity
@@ -86,7 +100,7 @@ with open("corona-out-2", "r") as f1:
                             'lang': data['lang'],
                             'in_reply_to_status_id_str': data['in_reply_to_status_id_str'],
                             'in_reply_to_user_id_str': data['in_reply_to_user_id_str'],
-                            'in_reply_to_screen_name': data['in_reply_to_screen_name']
+                            'in_reply_to_screen_name': data['in_reply_to_screen_name'],
                         }
                         if data['truncated'] is True:
                             comment['extended_tweet'] = data['extended_tweet']
@@ -94,12 +108,16 @@ with open("corona-out-2", "r") as f1:
                             comment['quoted_status_id_str'] = data['quoted_status_id_str']
                             comment['quoted_status'] = row['quoted_status']
                         comments_coll.insert_one(comment)
+            # Check if its a tweet or comment
             elif row['in_reply_to_status_id_str'] is None:
                 result = tweet_coll.find_one({'id_str' : row['id_str']})
                 if result is None:
                     pop = calc_popularity(row)
                     hash = []
-                    hash_data = row['entities']['hashtags']
+                    if row['truncated'] is True:
+                        hash_data = row['extended_tweet']['entities']['hashtags']
+                    else:
+                        hash_data = row['entities']['hashtags']
                     for i in hash_data:
                         hash.append(i['text'])
                     tweet = {
@@ -125,6 +143,9 @@ with open("corona-out-2", "r") as f1:
                             continue
                         tweet['quoted_status_id_str'] = row['quoted_status_id_str']
                         tweet['quoted_status'] = row['quoted_status']
+                    dt = datetime.strptime(row['created_at'], "%a %b %d %H:%M:%S %z %Y")
+                    epoch_time = float(dt.timestamp())
+                    tweet['timestamp'] = epoch_time
                     tweet_coll.insert_one(tweet)
                 else:
                     # Update Popularity
@@ -165,3 +186,8 @@ with open("corona-out-2", "r") as f1:
                 print(exc_type, exc_tb.tb_lineno)
                 if err_ctr == 1:
                     break
+
+# Add Index on username in tweets collection
+db['tweets'].create_index('user_name')
+# Add Index on original tweet id on comments collection
+db['comments'].create_index('in_reply_to_status_id_str')
