@@ -112,6 +112,12 @@ def retrieve_input():
             cache_obj.add_in_cache(x, tweets)
         buttonCommit = tk.Button(frame, height=1, width=10, text="Show more", command=lambda: show_more_hashtags(x,offset+10))
         buttonCommit.grid()
+        buttonCommit = tk.Button(frame, height=1, width=10, text="By day", command=lambda: top_10hashtag_day(x))
+        buttonCommit.grid(row = i+6,column=0)
+        buttonCommit = tk.Button(frame, height=1, width=10, text="By week", command=lambda: top_10hashtag_week(x))
+        buttonCommit.grid(row = i+6,column=1)
+        buttonCommit = tk.Button(frame, height=1, width=10, text="By month", command=lambda: top_10hashtag_month(x))
+        buttonCommit.grid(row=i+6,column=2)
         tk.mainloop()
     else:
         tk.Label(frame, text="Tweet ID", font=('Helveticabold', 15, "bold")).grid(row=5, column=0)
@@ -162,7 +168,182 @@ def retrieve_input():
             cache_obj.add_in_cache(x, tweets)
         buttonCommit = tk.Button(frame, height=1, width=10, text="Show more", command=lambda: show_more_tweets(x,offset+10))
         buttonCommit.grid()
+        buttonCommit = tk.Button(frame, height=1, width=10, text="By day", command=lambda: top_10tweet_day(x))
+        buttonCommit.grid(row=i + 6, column=0)
+        buttonCommit = tk.Button(frame, height=1, width=10, text="By week", command=lambda: top_10tweet_week(x))
+        buttonCommit.grid(row=i + 6, column=1)
+        buttonCommit = tk.Button(frame, height=1, width=10, text="By month", command=lambda: top_10tweet_month(x))
+        buttonCommit.grid(row=i + 6, column=2)
         tk.mainloop()
+
+def top_10hashtag_day(x):
+    start = time.time()
+    tweets = tweet_obj.hashtag_by_day(x[1:])
+    end = time.time()
+    disp = f"Time to retrieve {end - start:.10f}"
+    tk.Label(frame, text=disp).grid(row=4)
+    i = 0
+    for rows in tweets:
+        t_id = rows['id_str']
+        link1 = tk.Label(frame, text=t_id, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link1.grid(row=i + 6, column=0, sticky="n")
+        link1.bind("<Button-1>", lambda event: tweet_details(event))
+        u_name = rows['user_name']
+        link2 = tk.Label(frame, text=u_name, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link2.grid(row=i + 6, column=1, sticky="n")
+        link2.bind("<Button-1>", lambda event: user_details(event))
+        tweet = rows['text']
+        link3 = tk.Label(frame, text=tweet, font=('Helveticabold', 15))
+        link3.grid(row=i + 6, column=2)
+        i = i + 1
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By day", command=lambda: top_10hashtag_day(x))
+    buttonCommit.grid(row=i + 6, column=0)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By week", command=lambda: top_10hashtag_week(x))
+    buttonCommit.grid(row=i + 6, column=1)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By month", command=lambda: top_10hashtag_month(x))
+    buttonCommit.grid(row=i + 6, column=2)
+    tk.mainloop()
+
+def top_10hashtag_month(x):
+    start = time.time()
+    tweets = tweet_obj.hashtag_by_month(x[1:])
+    end = time.time()
+    disp = f"Time to retrieve {end - start:.10f}"
+    tk.Label(frame, text=disp).grid(row=4)
+    i = 0
+    for rows in tweets:
+        t_id = rows['id_str']
+        link1 = tk.Label(frame, text=t_id, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link1.grid(row=i + 6, column=0, sticky="n")
+        link1.bind("<Button-1>", lambda event: tweet_details(event))
+        u_name = rows['user_name']
+        link2 = tk.Label(frame, text=u_name, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link2.grid(row=i + 6, column=1, sticky="n")
+        link2.bind("<Button-1>", lambda event: user_details(event))
+        tweet = rows['text']
+        link3 = tk.Label(frame, text=tweet, font=('Helveticabold', 15))
+        link3.grid(row=i + 6, column=2)
+        i = i + 1
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By day", command=lambda: top_10hashtag_day(x))
+    buttonCommit.grid(row=i + 6, column=0)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By week", command=lambda: top_10hashtag_week(x))
+    buttonCommit.grid(row=i + 6, column=1)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By month", command=lambda: top_10hashtag_month(x))
+    buttonCommit.grid(row=i + 6, column=2)
+    tk.mainloop()
+
+def top_10hashtag_week(x):
+    start = time.time()
+    tweets = tweet_obj.hashtag_by_week(x[1:])
+    end = time.time()
+    disp = f"Time to retrieve {end - start:.10f}"
+    tk.Label(frame, text=disp).grid(row=4)
+    i = 0
+    for rows in tweets:
+        t_id = rows['id_str']
+        link1 = tk.Label(frame, text=t_id, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link1.grid(row=i + 6, column=0, sticky="n")
+        link1.bind("<Button-1>", lambda event: tweet_details(event))
+        u_name = rows['user_name']
+        link2 = tk.Label(frame, text=u_name, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link2.grid(row=i + 6, column=1, sticky="n")
+        link2.bind("<Button-1>", lambda event: user_details(event))
+        tweet = rows['text']
+        link3 = tk.Label(frame, text=tweet, font=('Helveticabold', 15))
+        link3.grid(row=i + 6, column=2)
+        i = i + 1
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By day", command=lambda: top_10hashtag_day(x))
+    buttonCommit.grid(row=i + 6, column=0)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By week", command=lambda: top_10hashtag_week(x))
+    buttonCommit.grid(row=i + 6, column=1)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By month", command=lambda: top_10hashtag_month(x))
+    buttonCommit.grid(row=i + 6, column=2)
+    tk.mainloop()
+
+def top_10tweet_day(x):
+    i = 0
+    start = time.time()
+    tweets = tweet_obj.tweet_by_day(x)
+    end = time.time()
+    disp = f"Time to retrieve {end - start:.10f}"
+    tk.Label(frame, text=disp).grid(row=4)
+    for rows in tweets:
+        t_id = rows['id_str']
+        link1 = tk.Label(frame, text=t_id, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link1.grid(row=i + 6, column=0, sticky="n")
+        link1.bind("<Button-1>", lambda event: tweet_details(event))
+        u_name = rows['user_name']
+        link2 = tk.Label(frame, text=u_name, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link2.grid(row=i + 6, column=1, sticky="n")
+        link2.bind("<Button-1>", lambda event: user_details(event))
+        tweet = rows['text']
+        link3 = tk.Label(frame, text=tweet, font=('Helveticabold', 15))
+        link3.grid(row=i + 6, column=2)
+        i = i + 1
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By day", command=lambda: top_10tweet_day(x))
+    buttonCommit.grid(row=i + 6, column=0)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By week", command=lambda: top_10tweet_week(x))
+    buttonCommit.grid(row=i + 6, column=1)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By month", command=lambda: top_10tweet_month(x))
+    buttonCommit.grid(row=i + 6, column=2)
+    tk.mainloop()
+
+def top_10tweet_week(x):
+    i = 0
+    start = time.time()
+    tweets = tweet_obj.tweet_by_week(x)
+    end = time.time()
+    disp = f"Time to retrieve {end - start:.10f}"
+    tk.Label(frame, text=disp).grid(row=4)
+    for rows in tweets:
+        t_id = rows['id_str']
+        link1 = tk.Label(frame, text=t_id, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link1.grid(row=i + 6, column=0, sticky="n")
+        link1.bind("<Button-1>", lambda event: tweet_details(event))
+        u_name = rows['user_name']
+        link2 = tk.Label(frame, text=u_name, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link2.grid(row=i + 6, column=1, sticky="n")
+        link2.bind("<Button-1>", lambda event: user_details(event))
+        tweet = rows['text']
+        link3 = tk.Label(frame, text=tweet, font=('Helveticabold', 15))
+        link3.grid(row=i + 6, column=2)
+        i = i + 1
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By day", command=lambda: top_10tweet_day(x))
+    buttonCommit.grid(row=i + 6, column=0)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By week", command=lambda: top_10tweet_week(x))
+    buttonCommit.grid(row=i + 6, column=1)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By month", command=lambda: top_10tweet_month(x))
+    buttonCommit.grid(row=i + 6, column=2)
+    tk.mainloop()
+
+def top_10tweet_month(x):
+    i = 0
+    start = time.time()
+    tweets = tweet_obj.tweet_by_month(x)
+    end = time.time()
+    disp = f"Time to retrieve {end - start:.10f}"
+    tk.Label(frame, text=disp).grid(row=4)
+    for rows in tweets:
+        t_id = rows['id_str']
+        link1 = tk.Label(frame, text=t_id, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link1.grid(row=i + 6, column=0, sticky="n")
+        link1.bind("<Button-1>", lambda event: tweet_details(event))
+        u_name = rows['user_name']
+        link2 = tk.Label(frame, text=u_name, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link2.grid(row=i + 6, column=1, sticky="n")
+        link2.bind("<Button-1>", lambda event: user_details(event))
+        tweet = rows['text']
+        link3 = tk.Label(frame, text=tweet, font=('Helveticabold', 15))
+        link3.grid(row=i + 6, column=2)
+        i = i + 1
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By day", command=lambda: top_10tweet_day(x))
+    buttonCommit.grid(row=i + 6, column=0)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By week", command=lambda: top_10tweet_week(x))
+    buttonCommit.grid(row=i + 6, column=1)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By month", command=lambda: top_10tweet_month(x))
+    buttonCommit.grid(row=i + 6, column=2)
+    tk.mainloop()
+
 
 
 def user_details(event):
@@ -337,6 +518,100 @@ def top_10_tweets():
         link3 = tk.Label(frame, text=tweet, font=('Helveticabold', 15))
         link3.grid(row=i + 5, column=2)
         i = i + 1
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By day",command=lambda: top_10_day())
+    buttonCommit.grid(row = i+5,column = 0)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By week", command=lambda: top_10_week())
+    buttonCommit.grid(row=i + 5, column=1)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By month", command=lambda: top_10_month())
+    buttonCommit.grid(row=i + 5, column=2)
+    tk.mainloop()
+
+def top_10_day():
+    clear_frame()
+    tweets = tweet_obj.top10_by_day()
+    i = 0
+    tk.Label(frame, text="Tweet ID", font=('Helveticabold', 15, "bold")).grid(row=4, column=0)
+    tk.Label(frame, text="User Name", font=('Helveticabold', 15, "bold")).grid(row=4, column=1)
+    tk.Label(frame, text="Tweet", font=('Helveticabold', 15, "bold")).grid(row=4, column=2)
+    for rows in tweets:
+        t_id = rows['id_str']
+        link1 = tk.Label(frame, text=t_id, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link1.grid(row=i + 5, column=0, sticky="n")
+        link1.bind("<Button-1>", lambda event: tweet_details(event))
+        u_name = rows['user_name']
+        link2 = tk.Label(frame, text=u_name, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link2.grid(row=i + 5, column=1, sticky="n")
+        link2.bind("<Button-1>", lambda event: user_details(event))
+        tweet = rows['text']
+        link3 = tk.Label(frame, text=tweet, font=('Helveticabold', 15))
+        link3.grid(row=i + 5, column=2)
+        i = i + 1
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By day", command=lambda: top_10_day())
+    buttonCommit.grid(row=i + 5, column=0)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By week", command=lambda: top_10_week())
+    buttonCommit.grid(row=i + 5, column=1)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By month", command=lambda: top_10_month())
+    buttonCommit.grid(row=i + 5, column=2)
+    tk.mainloop()
+
+
+def top_10_month():
+    print("Top 10 by month")
+    clear_frame()
+    tweets = tweet_obj.top10_by_month()
+    i = 0
+    tk.Label(frame, text="Tweet ID", font=('Helveticabold', 15, "bold")).grid(row=4, column=0)
+    tk.Label(frame, text="User Name", font=('Helveticabold', 15, "bold")).grid(row=4, column=1)
+    tk.Label(frame, text="Tweet", font=('Helveticabold', 15, "bold")).grid(row=4, column=2)
+    for rows in tweets:
+        t_id = rows['id_str']
+        link1 = tk.Label(frame, text=t_id, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link1.grid(row=i + 5, column=0, sticky="n")
+        link1.bind("<Button-1>", lambda event: tweet_details(event))
+        u_name = rows['user_name']
+        link2 = tk.Label(frame, text=u_name, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link2.bind("<Button-1>", lambda event: user_details(event))
+        tweet = rows['text']
+        link3 = tk.Label(frame, text=tweet, font=('Helveticabold', 15))
+        link3.grid(row=i + 5, column=2)
+        i = i + 1
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By day", command=lambda: top_10_day())
+    buttonCommit.grid(row=i + 5, column=0)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By week", command=lambda: top_10_week())
+    buttonCommit.grid(row=i + 5, column=1)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By month", command=lambda: top_10_month())
+    buttonCommit.grid(row=i + 5, column=2)
+    tk.mainloop()
+
+def top_10_week():
+    print("Top 10 by week")
+    clear_frame()
+    tweets = tweet_obj.top10_by_week()
+    i = 0
+    tk.Label(frame, text="Tweet ID", font=('Helveticabold', 15, "bold")).grid(row=4, column=0)
+    tk.Label(frame, text="User Name", font=('Helveticabold', 15, "bold")).grid(row=4, column=1)
+    tk.Label(frame, text="Tweet", font=('Helveticabold', 15, "bold")).grid(row=4, column=2)
+    for rows in tweets:
+        t_id = rows['id_str']
+        link1 = tk.Label(frame, text=t_id, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link1.grid(row=i + 5, column=0, sticky="n")
+        link1.bind("<Button-1>", lambda event: tweet_details(event))
+        u_name = rows['user_name']
+        link2 = tk.Label(frame, text=u_name, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link2.bind("<Button-1>", lambda event: user_details(event))
+        tweet = rows['text']
+        link3 = tk.Label(frame, text=tweet, font=('Helveticabold', 15))
+        link3.grid(row=i + 5, column=2)
+        i = i + 1
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By day", command=lambda: top_10_day())
+    buttonCommit.grid(row=i + 5, column=0)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By week", command=lambda: top_10_week())
+    buttonCommit.grid(row=i + 5, column=1)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By month", command=lambda: top_10_month())
+    buttonCommit.grid(row=i + 5, column=2)
+    tk.mainloop()
+
+
 def user_tweets(uname):
     tweets = tweet_obj.get_tweets_by_username(uname)
     clear_frame()
