@@ -9,12 +9,16 @@ tweet_obj = TweetQuery()
 user_obj = UserDatabase()
 cache_obj = Cache()
 
-
+# Function to clear frame of Tkinter GUI
 def clear_frame():
     for widgets in frame.winfo_children():
         widgets.destroy()
 
-
+"""
+retrieve_input() function is invoked everytime we click on the search button.
+Retrieve input function is used to extract the text from the search-box, 
+then it matches the pattern with @,# and a normal text and accordingly calls the functions and prints  the output.
+It also adds and retrieves data from the cache and also checks if the object is present in the cache or not."""
 def retrieve_input():
     x = e1.get()
     offset = 0
@@ -112,6 +116,12 @@ def retrieve_input():
             cache_obj.add_in_cache(x, tweets)
         buttonCommit = tk.Button(frame, height=1, width=10, text="Show more", command=lambda: show_more_hashtags(x,offset+10))
         buttonCommit.grid()
+        buttonCommit = tk.Button(frame, height=1, width=10, text="By day", command=lambda: top_10hashtag_day(x))
+        buttonCommit.grid(row = i+6,column=0)
+        buttonCommit = tk.Button(frame, height=1, width=10, text="By week", command=lambda: top_10hashtag_week(x))
+        buttonCommit.grid(row = i+6,column=1)
+        buttonCommit = tk.Button(frame, height=1, width=10, text="By month", command=lambda: top_10hashtag_month(x))
+        buttonCommit.grid(row=i+6,column=2)
         tk.mainloop()
     else:
         tk.Label(frame, text="Tweet ID", font=('Helveticabold', 15, "bold")).grid(row=5, column=0)
@@ -162,9 +172,196 @@ def retrieve_input():
             cache_obj.add_in_cache(x, tweets)
         buttonCommit = tk.Button(frame, height=1, width=10, text="Show more", command=lambda: show_more_tweets(x,offset+10))
         buttonCommit.grid()
+        buttonCommit = tk.Button(frame, height=1, width=10, text="By day", command=lambda: top_10tweet_day(x))
+        buttonCommit.grid(row=i + 6, column=0)
+        buttonCommit = tk.Button(frame, height=1, width=10, text="By week", command=lambda: top_10tweet_week(x))
+        buttonCommit.grid(row=i + 6, column=1)
+        buttonCommit = tk.Button(frame, height=1, width=10, text="By month", command=lambda: top_10tweet_month(x))
+        buttonCommit.grid(row=i + 6, column=2)
         tk.mainloop()
 
 
+# This function filters out a particular searched hashtag by a DAY and displays the top tweets
+def top_10hashtag_day(x):
+    clear_frame()
+    start = time.time()
+    tweets = tweet_obj.hash_by_day(x[1:])
+    end = time.time()
+    disp = f"Time to retrieve {end - start:.10f}"
+    tk.Label(frame, text=disp).grid(row=4)
+    i = 0
+    for rows in tweets:
+        t_id = rows['id_str']
+        link1 = tk.Label(frame, text=t_id, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link1.grid(row=i + 6, column=0, sticky="n")
+        link1.bind("<Button-1>", lambda event: tweet_details(event))
+        u_name = rows['user_name']
+        link2 = tk.Label(frame, text=u_name, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link2.grid(row=i + 6, column=1, sticky="n")
+        link2.bind("<Button-1>", lambda event: user_details(event))
+        tweet = rows['text']
+        link3 = tk.Label(frame, text=tweet, font=('Helveticabold', 15))
+        link3.grid(row=i + 6, column=2)
+        i = i + 1
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By day", command=lambda: top_10hashtag_day(x))
+    buttonCommit.grid(row=i + 6, column=0)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By week", command=lambda: top_10hashtag_week(x))
+    buttonCommit.grid(row=i + 6, column=1)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By month", command=lambda: top_10hashtag_month(x))
+    buttonCommit.grid(row=i + 6, column=2)
+    tk.mainloop()
+
+# This function filters out a particular searched hashtag by MONTH and displays the top tweets
+def top_10hashtag_month(x):
+    clear_frame()
+    start = time.time()
+    tweets = tweet_obj.hash_by_month(x[1:])
+    end = time.time()
+    disp = f"Time to retrieve {end - start:.10f}"
+    tk.Label(frame, text=disp).grid(row=4)
+    i = 0
+    for rows in tweets:
+        t_id = rows['id_str']
+        link1 = tk.Label(frame, text=t_id, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link1.grid(row=i + 6, column=0, sticky="n")
+        link1.bind("<Button-1>", lambda event: tweet_details(event))
+        u_name = rows['user_name']
+        link2 = tk.Label(frame, text=u_name, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link2.grid(row=i + 6, column=1, sticky="n")
+        link2.bind("<Button-1>", lambda event: user_details(event))
+        tweet = rows['text']
+        link3 = tk.Label(frame, text=tweet, font=('Helveticabold', 15))
+        link3.grid(row=i + 6, column=2)
+        i = i + 1
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By day", command=lambda: top_10hashtag_day(x))
+    buttonCommit.grid(row=i + 6, column=0)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By week", command=lambda: top_10hashtag_week(x))
+    buttonCommit.grid(row=i + 6, column=1)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By month", command=lambda: top_10hashtag_month(x))
+    buttonCommit.grid(row=i + 6, column=2)
+    tk.mainloop()
+
+# This function filters out a particular searched hashtag by WEEK and displays the top tweets
+def top_10hashtag_week(x):
+    clear_frame()
+    start = time.time()
+    tweets = tweet_obj.hash_by_week(x[1:])
+    end = time.time()
+    disp = f"Time to retrieve {end - start:.10f}"
+    tk.Label(frame, text=disp).grid(row=4)
+    i = 0
+    for rows in tweets:
+        t_id = rows['id_str']
+        link1 = tk.Label(frame, text=t_id, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link1.grid(row=i + 6, column=0, sticky="n")
+        link1.bind("<Button-1>", lambda event: tweet_details(event))
+        u_name = rows['user_name']
+        link2 = tk.Label(frame, text=u_name, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link2.grid(row=i + 6, column=1, sticky="n")
+        link2.bind("<Button-1>", lambda event: user_details(event))
+        tweet = rows['text']
+        link3 = tk.Label(frame, text=tweet, font=('Helveticabold', 15))
+        link3.grid(row=i + 6, column=2)
+        i = i + 1
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By day", command=lambda: top_10hashtag_day(x))
+    buttonCommit.grid(row=i + 6, column=0)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By week", command=lambda: top_10hashtag_week(x))
+    buttonCommit.grid(row=i + 6, column=1)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By month", command=lambda: top_10hashtag_month(x))
+    buttonCommit.grid(row=i + 6, column=2)
+    tk.mainloop()
+
+# This function filters out a particular searched text by a DAY and displays the top tweets
+def top_10tweet_day(x):
+    clear_frame()
+    i = 0
+    start = time.time()
+    tweets = tweet_obj.tweet_by_day(x)
+    end = time.time()
+    disp = f"Time to retrieve {end - start:.10f}"
+    tk.Label(frame, text=disp).grid(row=4)
+    for rows in tweets:
+        t_id = rows['id_str']
+        link1 = tk.Label(frame, text=t_id, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link1.grid(row=i + 6, column=0, sticky="n")
+        link1.bind("<Button-1>", lambda event: tweet_details(event))
+        u_name = rows['user_name']
+        link2 = tk.Label(frame, text=u_name, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link2.grid(row=i + 6, column=1, sticky="n")
+        link2.bind("<Button-1>", lambda event: user_details(event))
+        tweet = rows['text']
+        link3 = tk.Label(frame, text=tweet, font=('Helveticabold', 15))
+        link3.grid(row=i + 6, column=2)
+        i = i + 1
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By day", command=lambda: top_10tweet_day(x))
+    buttonCommit.grid(row=i + 6, column=0)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By week", command=lambda: top_10tweet_week(x))
+    buttonCommit.grid(row=i + 6, column=1)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By month", command=lambda: top_10tweet_month(x))
+    buttonCommit.grid(row=i + 6, column=2)
+    tk.mainloop()
+
+# This function filters out a particular searched text by WEEK and displays the top tweets
+def top_10tweet_week(x):
+    clear_frame()
+    i = 0
+    start = time.time()
+    tweets = tweet_obj.tweet_by_week(x)
+    end = time.time()
+    disp = f"Time to retrieve {end - start:.10f}"
+    tk.Label(frame, text=disp).grid(row=4)
+    for rows in tweets:
+        t_id = rows['id_str']
+        link1 = tk.Label(frame, text=t_id, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link1.grid(row=i + 6, column=0, sticky="n")
+        link1.bind("<Button-1>", lambda event: tweet_details(event))
+        u_name = rows['user_name']
+        link2 = tk.Label(frame, text=u_name, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link2.grid(row=i + 6, column=1, sticky="n")
+        link2.bind("<Button-1>", lambda event: user_details(event))
+        tweet = rows['text']
+        link3 = tk.Label(frame, text=tweet, font=('Helveticabold', 15))
+        link3.grid(row=i + 6, column=2)
+        i = i + 1
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By day", command=lambda: top_10tweet_day(x))
+    buttonCommit.grid(row=i + 6, column=0)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By week", command=lambda: top_10tweet_week(x))
+    buttonCommit.grid(row=i + 6, column=1)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By month", command=lambda: top_10tweet_month(x))
+    buttonCommit.grid(row=i + 6, column=2)
+    tk.mainloop()
+
+# This function filters out a particular searched text by MONTH and displays the top tweets
+def top_10tweet_month(x):
+    clear_frame()
+    i = 0
+    start = time.time()
+    tweets = tweet_obj.tweet_by_month(x)
+    end = time.time()
+    disp = f"Time to retrieve {end - start:.10f}"
+    tk.Label(frame, text=disp).grid(row=4)
+    for rows in tweets:
+        t_id = rows['id_str']
+        link1 = tk.Label(frame, text=t_id, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link1.grid(row=i + 6, column=0, sticky="n")
+        link1.bind("<Button-1>", lambda event: tweet_details(event))
+        u_name = rows['user_name']
+        link2 = tk.Label(frame, text=u_name, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link2.grid(row=i + 6, column=1, sticky="n")
+        link2.bind("<Button-1>", lambda event: user_details(event))
+        tweet = rows['text']
+        link3 = tk.Label(frame, text=tweet, font=('Helveticabold', 15))
+        link3.grid(row=i + 6, column=2)
+        i = i + 1
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By day", command=lambda: top_10tweet_day(x))
+    buttonCommit.grid(row=i + 6, column=0)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By week", command=lambda: top_10tweet_week(x))
+    buttonCommit.grid(row=i + 6, column=1)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By month", command=lambda: top_10tweet_month(x))
+    buttonCommit.grid(row=i + 6, column=2)
+    tk.mainloop()
+
+# This function retrieves and displays all the user_details of a particular user.
 def user_details(event):
     clicked_label = event.widget
     label_text = clicked_label.cget("text")
@@ -177,7 +374,8 @@ def user_details(event):
         tk.Button(frame, height=1, width=10, text="Get Tweets", command=lambda : user_tweets(rows[1])).grid(row=3)
     tk.mainloop()
 
-
+"""This function retrieves and displays all the tweet details of a particular tweet and also gives 
+a button to check sentiment of the tweet."""
 def tweet_details(event):
     clicked_label = event.widget
     label_text = clicked_label.cget("text")
@@ -214,10 +412,11 @@ def tweet_details(event):
         button2 = tk.Button(frame, height=1, width=10, text="Comments",
                             command=lambda: display_comments(rows['id_str'], i+2))
         button2.grid(row=i+1, column=1)
-    #buttonCommit = tk.Button(frame, height=1, width=10, text="Get Sentiment", command=lambda: get_sentiment(label_text))
-    #buttonCommit.grid(column = 1)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="Get Sentiment", command=lambda: get_sentiment(label_text))
+    buttonCommit.grid(column = 1)
     tk.mainloop()
 
+# This function is invoked on clicking the GET SENTIMENT button and gives the sentiment of that particular tweet
 def get_sentiment(label_text):
     print("Sentiment")
     y = tweet_obj.get_sentiment(label_text)
@@ -226,7 +425,7 @@ def get_sentiment(label_text):
         link1.grid(column = 1)
     tk.mainloop()
 
-
+# This function is invoked on clicking the show more button which loads the next 10 users of a particular search
 def show_more(x,offset):
     clear_frame()
     y = user_obj.get_user_by_name(x[1:], offset)
@@ -244,6 +443,8 @@ def show_more(x,offset):
     buttonCommit.grid()
     tk.mainloop()
 
+
+# This function is invoked on clicking the show more button which loads the next 10 results of a particular hashtag
 def show_more_hashtags(x,offset):
     clear_frame()
     tk.Label(frame, text="Tweet ID", font=('Helveticabold', 15, "bold")).grid(row=5, column=0)
@@ -272,6 +473,7 @@ def show_more_hashtags(x,offset):
     buttonCommit.grid()
     tk.mainloop()
 
+# This function is invoked on clicking the show more button which loads the next 10 tweets of a particular text search
 def show_more_tweets(x,offset):
     clear_frame()
     tk.Label(frame, text="Tweet ID", font=('Helveticabold', 15, "bold")).grid(row=5, column=0)
@@ -301,6 +503,7 @@ def show_more_tweets(x,offset):
     tk.mainloop()
 
 
+# This function retrieves and displays the top 10 Users from the entire database
 def top_10_users():
     y = user_obj.get_top_ten()
     i = 0
@@ -317,6 +520,7 @@ def top_10_users():
     tk.mainloop()
 
 
+# This function retrieves and displays top 10 tweets from the entire database.
 def top_10_tweets():
     clear_frame()
     tweets = tweet_obj.get_top_10_popular_tweets()
@@ -337,6 +541,108 @@ def top_10_tweets():
         link3 = tk.Label(frame, text=tweet, font=('Helveticabold', 15))
         link3.grid(row=i + 5, column=2)
         i = i + 1
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By day",command=lambda: top_10_day())
+    buttonCommit.grid(row = i+5,column = 0)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By week", command=lambda: top_10_week())
+    buttonCommit.grid(row=i + 5, column=1)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By month", command=lambda: top_10_month())
+    buttonCommit.grid(row=i + 5, column=2)
+    tk.mainloop()
+
+
+# On clicking the By day button , this function displays top 10 tweets of a particular DAY
+def top_10_day():
+    clear_frame()
+    tweets = tweet_obj.top10_by_day()
+    i = 0
+    tk.Label(frame, text="Tweet ID", font=('Helveticabold', 15, "bold")).grid(row=4, column=0)
+    tk.Label(frame, text="User Name", font=('Helveticabold', 15, "bold")).grid(row=4, column=1)
+    tk.Label(frame, text="Tweet", font=('Helveticabold', 15, "bold")).grid(row=4, column=2)
+    for rows in tweets:
+        t_id = rows['id_str']
+        link1 = tk.Label(frame, text=t_id, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link1.grid(row=i + 5, column=0, sticky="n")
+        link1.bind("<Button-1>", lambda event: tweet_details(event))
+        u_name = rows['user_name']
+        link2 = tk.Label(frame, text=u_name, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link2.grid(row=i + 5, column=1, sticky="n")
+        link2.bind("<Button-1>", lambda event: user_details(event))
+        tweet = rows['text']
+        link3 = tk.Label(frame, text=tweet, font=('Helveticabold', 15))
+        link3.grid(row=i + 5, column=2)
+        i = i + 1
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By day", command=lambda: top_10_day())
+    buttonCommit.grid(row=i + 5, column=0)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By week", command=lambda: top_10_week())
+    buttonCommit.grid(row=i + 5, column=1)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By month", command=lambda: top_10_month())
+    buttonCommit.grid(row=i + 5, column=2)
+    tk.mainloop()
+
+
+# On clicking the By month button , this function displays top 10 tweets of a particular MONTH
+def top_10_month():
+    print("Top 10 by month")
+    clear_frame()
+    tweets = tweet_obj.top10_by_month()
+    i = 0
+    tk.Label(frame, text="Tweet ID", font=('Helveticabold', 15, "bold")).grid(row=4, column=0)
+    tk.Label(frame, text="User Name", font=('Helveticabold', 15, "bold")).grid(row=4, column=1)
+    tk.Label(frame, text="Tweet", font=('Helveticabold', 15, "bold")).grid(row=4, column=2)
+    for rows in tweets:
+        t_id = rows['id_str']
+        link1 = tk.Label(frame, text=t_id, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link1.grid(row=i + 5, column=0, sticky="n")
+        link1.bind("<Button-1>", lambda event: tweet_details(event))
+        u_name = rows['user_name']
+        link2 = tk.Label(frame, text=u_name, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link2.grid(row=i + 5, column=1, sticky="n")
+        link2.bind("<Button-1>", lambda event: user_details(event))
+        tweet = rows['text']
+        link3 = tk.Label(frame, text=tweet, font=('Helveticabold', 15))
+        link3.grid(row=i + 5, column=2)
+        i = i + 1
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By day", command=lambda: top_10_day())
+    buttonCommit.grid(row=i + 5, column=0)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By week", command=lambda: top_10_week())
+    buttonCommit.grid(row=i + 5, column=1)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By month", command=lambda: top_10_month())
+    buttonCommit.grid(row=i + 5, column=2)
+    tk.mainloop()
+
+
+# On clicking the By week button , this function displays top 10 tweets of a particular WEEK
+def top_10_week():
+    print("Top 10 by week")
+    clear_frame()
+    tweets = tweet_obj.top10_by_week()
+    i = 0
+    tk.Label(frame, text="Tweet ID", font=('Helveticabold', 15, "bold")).grid(row=4, column=0)
+    tk.Label(frame, text="User Name", font=('Helveticabold', 15, "bold")).grid(row=4, column=1)
+    tk.Label(frame, text="Tweet", font=('Helveticabold', 15, "bold")).grid(row=4, column=2)
+    for rows in tweets:
+        t_id = rows['id_str']
+        link1 = tk.Label(frame, text=t_id, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link1.grid(row=i + 5, column=0, sticky="n")
+        link1.bind("<Button-1>", lambda event: tweet_details(event))
+        u_name = rows['user_name']
+        link2 = tk.Label(frame, text=u_name, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link2.grid(row=i + 5, column=1, sticky="n")
+        link2.bind("<Button-1>", lambda event: user_details(event))
+        tweet = rows['text']
+        link3 = tk.Label(frame, text=tweet, font=('Helveticabold', 15))
+        link3.grid(row=i + 5, column=2)
+        i = i + 1
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By day", command=lambda: top_10_day())
+    buttonCommit.grid(row=i + 5, column=0)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By week", command=lambda: top_10_week())
+    buttonCommit.grid(row=i + 5, column=1)
+    buttonCommit = tk.Button(frame, height=1, width=10, text="By month", command=lambda: top_10_month())
+    buttonCommit.grid(row=i + 5, column=2)
+    tk.mainloop()
+
+
+# This function retrieves all the tweets of a particular user
 def user_tweets(uname):
     tweets = tweet_obj.get_tweets_by_username(uname)
     clear_frame()
@@ -359,6 +665,8 @@ def user_tweets(uname):
         i = i + 1
     tk.mainloop()
 
+
+# This function is used to display comments of a particular tweet.
 def display_comments(uid, i):
     comments = tweet_obj.get_comments_for_tweet(uid)
     tk.Label(frame, text="Comments", font=('Helveticabold', 15, "bold")).grid(row=i, column=1)
@@ -370,6 +678,8 @@ def display_comments(uid, i):
         tk.Label(frame, text=rows['text']).grid(row=i, column=1)
         i += 1
 
+
+# This function is used to display the users who have retweeted a particular tweet
 def display_retweets(tid, i):
     retweets = user_obj.retweets(tid)
     tk.Label(frame, text="Users who retweeted", font=('Helveticabold', 15, "bold")).grid(row=i, column=1)
