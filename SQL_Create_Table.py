@@ -5,7 +5,7 @@ import pandas as pd
 #conn = sqlite3.connect('user_db.db')
 import pymysql
 
-# establish connection to database
+# establish connection to MySQL database
 conn = pymysql.connect(user='root',
                               password='RushabhK',
                               host='localhost',
@@ -13,20 +13,8 @@ conn = pymysql.connect(user='root',
                               )
 
 cursor = conn.cursor()
-#cursor.execute("CREATE DATABASE user_db")
 
-"""
-sql = "DROP TABLE IF EXISTS user"
-
-# Execute the SQL query to drop the table
-conn.execute(sql)
-
-# Commit the changes and close the connection
-conn.commit()
-"""
-
-# Define the SQL query to create the table
-# CHECK CREATED AT FOR TYPE (DATE TIME FIELD)
+# SQL query to create the user table
 sql = """
 CREATE TABLE user (
     id_str VARCHAR(255) PRIMARY KEY,
@@ -62,5 +50,5 @@ CREATE TABLE retweets (
 # Execute the SQL query to create the table
 cursor.execute(sql)
 
-# Commit the changes and close the connection
-#conn.commit()
+# Commit the changes
+conn.commit()
