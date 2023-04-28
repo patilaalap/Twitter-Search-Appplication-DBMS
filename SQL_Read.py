@@ -4,7 +4,7 @@ import pymysql
 class UserDatabase:
     def __init__(self):
         self.conn = pymysql.connect(user='root',
-                              password='RushabhK',
+                              password='#Aalap21',
                               host='localhost',
                               database = 'user_db',
                               )
@@ -25,11 +25,18 @@ class UserDatabase:
         result = self.cursor.fetchall()
         return self.get_userdetails_list(result)
 
-    def get_top_ten(self,Uname):
+    def get_top_ten(self):
         sql = f"SELECT name, screen_name from user ORDER BY followers_count DESC LIMIT 10"
         self.cursor.execute(sql)
         result = self.cursor.fetchall()
         return self.get_userdetails_list(result)
+
+    def retweets(self, original_tweet_id):
+        sql = f"SELECT screen_name from retweets WHERE original_tweet_id = '{original_tweet_id}'"
+        self.cursor.execute(sql)
+        result = self.cursor.fetchall()
+        return self.get_userdetails_list(result)
+
 
     def get_userdetails_list(self, result):
         L= []
