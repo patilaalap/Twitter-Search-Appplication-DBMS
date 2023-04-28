@@ -90,7 +90,7 @@ def retrieve_input():
                 i = i + 1
         else:
             start = time.time()
-            tweets = tweet_obj.search_tweets_by_hashtags(x[1:])
+            tweets = tweet_obj.search_tweets_by_hashtags(x[1:],offset)
             end = time.time()
             disp = f"Time to retrieve {end - start:.10f}"
             tk.Label(frame, text=disp).grid(row=4)
@@ -110,8 +110,8 @@ def retrieve_input():
                 i = i + 1
             print(type(tweets))
             cache_obj.add_in_cache(x, tweets)
-        # buttonCommit = tk.Button(frame, height=1, width=10, text="Show more", command=lambda: show_more(x, offset + 10))
-        # buttonCommit.grid()
+        buttonCommit = tk.Button(frame, height=1, width=10, text="Show more", command=lambda: show_more_hashtags(x,offset+10))
+        buttonCommit.grid()
         tk.mainloop()
     else:
         tk.Label(frame, text="Tweet ID", font=('Helveticabold', 15, "bold")).grid(row=5, column=0)
@@ -142,7 +142,7 @@ def retrieve_input():
         else:
             i = 0
             start = time.time()
-            tweets = tweet_obj.query_tweets_by_regex(x)
+            tweets = tweet_obj.query_tweets_by_regex(x,offset)
             end = time.time()
             disp = f"Time to retrieve {end - start:.10f}"
             tk.Label(frame, text=disp).grid(row=4)
@@ -160,8 +160,8 @@ def retrieve_input():
                 link3.grid(row=i + 6, column=2)
                 i = i + 1
             cache_obj.add_in_cache(x, tweets)
-        #buttonCommit = tk.Button(frame, height=1, width=10, text="Show more", command=lambda: show_more(x, offset + 10))
-        #buttonCommit.grid()
+        buttonCommit = tk.Button(frame, height=1, width=10, text="Show more", command=lambda: show_more_tweets(x,offset+10))
+        buttonCommit.grid()
         tk.mainloop()
 
 
@@ -241,6 +241,62 @@ def show_more(x,offset):
         link.grid(row=i + 5, column=1)
         i = i + 1
     buttonCommit = tk.Button(frame, height=1, width=10, text="Show more", command=lambda: show_more(x, offset + 10))
+    buttonCommit.grid()
+    tk.mainloop()
+
+def show_more_hashtags(x,offset):
+    clear_frame()
+    tk.Label(frame, text="Tweet ID", font=('Helveticabold', 15, "bold")).grid(row=5, column=0)
+    tk.Label(frame, text="User Name", font=('Helveticabold', 15, "bold")).grid(row=5, column=1)
+    tk.Label(frame, text="Tweet", font=('Helveticabold', 15, "bold")).grid(row=5, column=2)
+    start = time.time()
+    tweets = tweet_obj.search_tweets_by_hashtags(x[1:],offset)
+    end = time.time()
+    disp = f"Time to retrieve {end - start:.10f}"
+    tk.Label(frame, text=disp).grid(row=4)
+    i = 0
+    for rows in tweets:
+        t_id = rows['id_str']
+        link1 = tk.Label(frame, text=t_id, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link1.grid(row=i + 6, column=0, sticky="n")
+        link1.bind("<Button-1>", lambda event: tweet_details(event))
+        u_name = rows['user_name']
+        link2 = tk.Label(frame, text=u_name, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link2.grid(row=i + 6, column=1, sticky="n")
+        link2.bind("<Button-1>", lambda event: user_details(event))
+        tweet = rows['text']
+        link3 = tk.Label(frame, text=tweet, font=('Helveticabold', 15))
+        link3.grid(row=i + 6, column=2)
+        i = i + 1
+    buttonCommit = tk.Button(frame, height=1, width=10, text="Show more", command=lambda: show_more_hashtags(x, offset + 10))
+    buttonCommit.grid()
+    tk.mainloop()
+
+def show_more_tweets(x,offset):
+    clear_frame()
+    tk.Label(frame, text="Tweet ID", font=('Helveticabold', 15, "bold")).grid(row=5, column=0)
+    tk.Label(frame, text="User Name", font=('Helveticabold', 15, "bold")).grid(row=5, column=1)
+    tk.Label(frame, text="Tweet", font=('Helveticabold', 15, "bold")).grid(row=5, column=2)
+    i = 0
+    start = time.time()
+    tweets = tweet_obj.query_tweets_by_regex(x,offset)
+    end = time.time()
+    disp = f"Time to retrieve {end - start:.10f}"
+    tk.Label(frame, text=disp).grid(row=4)
+    for rows in tweets:
+        t_id = rows['id_str']
+        link1 = tk.Label(frame, text=t_id, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link1.grid(row=i + 6, column=0, sticky="n")
+        link1.bind("<Button-1>", lambda event: tweet_details(event))
+        u_name = rows['user_name']
+        link2 = tk.Label(frame, text=u_name, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link2.grid(row=i + 6, column=1, sticky="n")
+        link2.bind("<Button-1>", lambda event: user_details(event))
+        tweet = rows['text']
+        link3 = tk.Label(frame, text=tweet, font=('Helveticabold', 15))
+        link3.grid(row=i + 6, column=2)
+        i = i + 1
+    buttonCommit = tk.Button(frame, height=1, width=10, text="Show more",command=lambda: show_more_tweets(x, offset + 10))
     buttonCommit.grid()
     tk.mainloop()
 
