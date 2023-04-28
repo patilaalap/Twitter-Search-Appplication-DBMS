@@ -9,7 +9,6 @@ tweet_obj = TweetQuery()
 user_obj = UserDatabase()
 cache_obj = Cache()
 
-
 def clear_frame():
     for widgets in frame.winfo_children():
         widgets.destroy()
@@ -176,9 +175,11 @@ def retrieve_input():
         buttonCommit.grid(row=i + 6, column=2)
         tk.mainloop()
 
+
 def top_10hashtag_day(x):
+    clear_frame()
     start = time.time()
-    tweets = tweet_obj.hashtag_by_day(x[1:])
+    tweets = tweet_obj.hash_by_day(x[1:])
     end = time.time()
     disp = f"Time to retrieve {end - start:.10f}"
     tk.Label(frame, text=disp).grid(row=4)
@@ -203,10 +204,12 @@ def top_10hashtag_day(x):
     buttonCommit = tk.Button(frame, height=1, width=10, text="By month", command=lambda: top_10hashtag_month(x))
     buttonCommit.grid(row=i + 6, column=2)
     tk.mainloop()
+
 
 def top_10hashtag_month(x):
+    clear_frame()
     start = time.time()
-    tweets = tweet_obj.hashtag_by_month(x[1:])
+    tweets = tweet_obj.hash_by_month(x[1:])
     end = time.time()
     disp = f"Time to retrieve {end - start:.10f}"
     tk.Label(frame, text=disp).grid(row=4)
@@ -231,10 +234,12 @@ def top_10hashtag_month(x):
     buttonCommit = tk.Button(frame, height=1, width=10, text="By month", command=lambda: top_10hashtag_month(x))
     buttonCommit.grid(row=i + 6, column=2)
     tk.mainloop()
+
 
 def top_10hashtag_week(x):
+    clear_frame()
     start = time.time()
-    tweets = tweet_obj.hashtag_by_week(x[1:])
+    tweets = tweet_obj.hash_by_week(x[1:])
     end = time.time()
     disp = f"Time to retrieve {end - start:.10f}"
     tk.Label(frame, text=disp).grid(row=4)
@@ -260,7 +265,9 @@ def top_10hashtag_week(x):
     buttonCommit.grid(row=i + 6, column=2)
     tk.mainloop()
 
+
 def top_10tweet_day(x):
+    clear_frame()
     i = 0
     start = time.time()
     tweets = tweet_obj.tweet_by_day(x)
@@ -288,7 +295,9 @@ def top_10tweet_day(x):
     buttonCommit.grid(row=i + 6, column=2)
     tk.mainloop()
 
+
 def top_10tweet_week(x):
+    clear_frame()
     i = 0
     start = time.time()
     tweets = tweet_obj.tweet_by_week(x)
@@ -316,7 +325,9 @@ def top_10tweet_week(x):
     buttonCommit.grid(row=i + 6, column=2)
     tk.mainloop()
 
+
 def top_10tweet_month(x):
+    clear_frame()
     i = 0
     start = time.time()
     tweets = tweet_obj.tweet_by_month(x)
@@ -343,7 +354,6 @@ def top_10tweet_month(x):
     buttonCommit = tk.Button(frame, height=1, width=10, text="By month", command=lambda: top_10tweet_month(x))
     buttonCommit.grid(row=i + 6, column=2)
     tk.mainloop()
-
 
 
 def user_details(event):
@@ -399,6 +409,7 @@ def tweet_details(event):
     #buttonCommit.grid(column = 1)
     tk.mainloop()
 
+
 def get_sentiment(label_text):
     print("Sentiment")
     y = tweet_obj.get_sentiment(label_text)
@@ -424,6 +435,7 @@ def show_more(x,offset):
     buttonCommit = tk.Button(frame, height=1, width=10, text="Show more", command=lambda: show_more(x, offset + 10))
     buttonCommit.grid()
     tk.mainloop()
+
 
 def show_more_hashtags(x,offset):
     clear_frame()
@@ -452,6 +464,7 @@ def show_more_hashtags(x,offset):
     buttonCommit = tk.Button(frame, height=1, width=10, text="Show more", command=lambda: show_more_hashtags(x, offset + 10))
     buttonCommit.grid()
     tk.mainloop()
+
 
 def show_more_tweets(x,offset):
     clear_frame()
@@ -526,6 +539,7 @@ def top_10_tweets():
     buttonCommit.grid(row=i + 5, column=2)
     tk.mainloop()
 
+
 def top_10_day():
     clear_frame()
     tweets = tweet_obj.top10_by_day()
@@ -570,6 +584,7 @@ def top_10_month():
         link1.bind("<Button-1>", lambda event: tweet_details(event))
         u_name = rows['user_name']
         link2 = tk.Label(frame, text=u_name, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link2.grid(row=i + 5, column=1, sticky="n")
         link2.bind("<Button-1>", lambda event: user_details(event))
         tweet = rows['text']
         link3 = tk.Label(frame, text=tweet, font=('Helveticabold', 15))
@@ -582,6 +597,7 @@ def top_10_month():
     buttonCommit = tk.Button(frame, height=1, width=10, text="By month", command=lambda: top_10_month())
     buttonCommit.grid(row=i + 5, column=2)
     tk.mainloop()
+
 
 def top_10_week():
     print("Top 10 by week")
@@ -598,6 +614,7 @@ def top_10_week():
         link1.bind("<Button-1>", lambda event: tweet_details(event))
         u_name = rows['user_name']
         link2 = tk.Label(frame, text=u_name, font=('Helveticabold', 15), fg="blue", cursor="hand2")
+        link2.grid(row=i + 5, column=1, sticky="n")
         link2.bind("<Button-1>", lambda event: user_details(event))
         tweet = rows['text']
         link3 = tk.Label(frame, text=tweet, font=('Helveticabold', 15))
@@ -634,6 +651,7 @@ def user_tweets(uname):
         i = i + 1
     tk.mainloop()
 
+
 def display_comments(uid, i):
     comments = tweet_obj.get_comments_for_tweet(uid)
     tk.Label(frame, text="Comments", font=('Helveticabold', 15, "bold")).grid(row=i, column=1)
@@ -644,6 +662,7 @@ def display_comments(uid, i):
         link1.bind("<Button-1>", lambda event: user_details(event))
         tk.Label(frame, text=rows['text']).grid(row=i, column=1)
         i += 1
+
 
 def display_retweets(tid, i):
     retweets = user_obj.retweets(tid)
