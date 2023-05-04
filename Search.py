@@ -1,3 +1,5 @@
+# Code done by Aalap and Rushabh
+
 from SQL_Read import UserDatabase
 from Mongo_Read import TweetQuery
 from Cache import Cache
@@ -407,13 +409,13 @@ def tweet_details(event):
         else:
             i = 7
         button1 = tk.Button(frame, height=1, width=10, text="Retweets",
-                            command=lambda: display_retweets(rows['id_str'], i+2))
+                            command=lambda: display_retweets(rows['id_str'], i+3))
         button1.grid(row = i, column=1)
         button2 = tk.Button(frame, height=1, width=10, text="Comments",
-                            command=lambda: display_comments(rows['id_str'], i+2))
+                            command=lambda: display_comments(rows['id_str'], i+3))
         button2.grid(row=i+1, column=1)
-    buttonCommit = tk.Button(frame, height=1, width=10, text="Get Sentiment", command=lambda: get_sentiment(label_text))
-    buttonCommit.grid(column = 1)
+        buttonCommit = tk.Button(frame, height=1, width=10, text="Get Sentiment", command=lambda: get_sentiment(label_text))
+        buttonCommit.grid(row=i+2, column = 1)
     tk.mainloop()
 
 # This function is invoked on clicking the GET SENTIMENT button and gives the sentiment of that particular tweet
