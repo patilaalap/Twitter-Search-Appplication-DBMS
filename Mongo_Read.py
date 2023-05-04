@@ -1,3 +1,5 @@
+# Code Done by Abhishek
+
 import pymongo
 import time
 
@@ -33,12 +35,12 @@ class TweetQuery:
     # Query to get comments on a tweet
     def get_comments_for_tweet(self, tweet_id):
         comments = self.coll_comments.find({"in_reply_to_status_id_str": tweet_id},{'id':0}).hint(
-            'in_reply_to_status_id_str').sort("created_at", pymongo.DESCENDING)
+            'in_reply_to_status_id_str_1').sort("created_at", pymongo.DESCENDING)
         return self.get_details_list(comments)
 
     # Query to get a users tweets
     def get_tweets_by_username(self, username):
-        tweets = self.coll_tweets.find({"user_name": username},{'_id':0}).hint('user_name').sort("timestamp", pymongo.DESCENDING)
+        tweets = self.coll_tweets.find({"user_name": username},{'_id':0}).hint('user_name_1').sort("timestamp", pymongo.DESCENDING)
         return self.get_details_list(tweets)
 
 

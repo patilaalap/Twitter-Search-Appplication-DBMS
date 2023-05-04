@@ -1,13 +1,10 @@
-#import sqlite3
-import pandas as pd
+# Code done by Neeti
 
-# Connect to the SQLite database
-#conn = sqlite3.connect('user_db.db')
 import pymysql
 
 # establish connection to MySQL database
 conn = pymysql.connect(user='root',
-                              password='RushabhK',
+                              password='#Aalap21',
                               host='localhost',
                               database = 'user_db',
                               )

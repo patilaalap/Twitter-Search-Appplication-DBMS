@@ -1,3 +1,5 @@
+# Code done by Neeti
+
 from Mongo_Writes import tweet_coll
 import pymongo
 import nltk
@@ -15,7 +17,7 @@ for tweet in tweet_coll.find():
     else:
         text = tweet['text']
     # Removing the stop words and splitting the text
-    words = [w for w in text.lower().split() if not w in stop_words]
+    words = [w for w in text.lower().split() if w not in stop_words]
 
     # Joining the words again
     text = ' '.join(words)
