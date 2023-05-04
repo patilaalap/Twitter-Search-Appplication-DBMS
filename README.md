@@ -1,5 +1,5 @@
 # DBMS_Twitter
-Making a Search Application using twitter database
+Making a Search Application using twitter database.
 The SQL_Create_Table.py and SQL_Insert.py contains code to create User and Retweets table and insert the data in the respective tables from a JSON file.
 The Mongo_Writes.py file contains code to Create Tweets table and insert data inside the table from a JSON file using MongoDB and Python.
 The SQL_Read.py file contains the SQL queries to retrieve the required data from Tables and return it.
